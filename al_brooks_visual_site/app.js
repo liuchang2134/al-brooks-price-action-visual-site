@@ -590,15 +590,17 @@
         const strategy = findMorningStrategy(item);
         const strategyChip = strategy ? `<span class="chip strategy-chip">${escapeHtml(strategy.shortLabel)}</span>` : "";
         return `<article class="page-card${active}" data-id="${item.id}" tabindex="0">
-          <div class="thumb"><img src="${item.thumb}" alt="${escapeHtml(item.title)} 缩略图" loading="lazy" /></div>
+          ${renderCardPreview(item)}
           <div class="card-body">
             <h3 class="card-title">${escapeHtml(item.title)}</h3>
+            <p class="card-summary">${escapeHtml(cardSummary(item))}</p>
             <div class="chips">
               <span class="chip">${escapeHtml(displayCourseLabel(item))}</span>
               ${strategyChip}
               <span class="chip" style="color:${gradeColor}">${item.grade}</span>
               <span class="chip">第 ${item.page} 页</span>
             </div>
+            <span class="card-open-hint">点击后在上方大图阅读</span>
           </div>
         </article>`;
       })
@@ -612,6 +614,53 @@
         }
       });
     });
+  }
+
+  function renderCardPreview(item) {
+    if (item.kind === "front") {
+      const bullets = frontPreviewBullets(item);
+      return `<div class="thumb readable-thumb">
+        <span class="preview-kicker">${escapeHtml(displayCourseLabel(item))} / 说明页</span>
+        <strong>${escapeHtml(shortReadableTitle(item.title))}</strong>
+        <ul>
+          ${bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}
+        </ul>
+      </div>`;
+    }
+
+    const previewSrc = item.full || item.thumb;
+    return `<div class="thumb chart-thumb">
+      <img src="${previewSrc}" alt="${escapeHtml(item.title)} K线预览" loading="lazy" />
+      <span class="thumb-badge">高清K线预览</span>
+    </div>`;
+  }
+
+  function cardSummary(item) {
+    if (item.kind === "front") {
+      return item.summary || "说明页用于先理解图例、触发规则、结构止损和风险声明。";
+    }
+    const detail = item.details ? item.details["识别条件"] || item.details["开盘背景 / 识别条件"] : "";
+    return trimText(detail || item.summary || "点击后在阅读器里查看大图和完整说明。", 92);
+  }
+
+  function frontPreviewBullets(item) {
+    const title = item.title;
+    if (title.includes("图例")) return ["触发线", "结构止损", "第一目标区"];
+    if (title.includes("胜率")) return ["条件胜率", "背景过滤", "实战优先级"];
+    if (title.includes("市场周期")) return ["趋势", "交易区间", "突破模式"];
+    if (title.includes("入场")) return ["信号棒完成", "突破触发", "未触发不成交"];
+    if (title.includes("风险")) return ["教学用途", "不是建议", "先看风险收益"];
+    if (title.includes("开盘")) return ["前5分钟", "18-20根K线", "等待确认"];
+    return ["先读规则", "再看图谱", "最后复盘"];
+  }
+
+  function shortReadableTitle(title) {
+    return String(title).replace(/^封面：/, "").replace(/^0?\d+\s*/, "");
+  }
+
+  function trimText(text, maxLength) {
+    const clean = String(text).replace(/\s+/g, " ").trim();
+    return clean.length > maxLength ? `${clean.slice(0, maxLength)}...` : clean;
   }
 
   function selectPage(id, scrollReader) {
