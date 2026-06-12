@@ -83,7 +83,10 @@
   const directoryGroups = [
     {
       label: "全部资料",
-      options: [{ id: "all", label: "全部页面", description: "查看两份资料和早盘策略入口。" }],
+      options: [
+        { id: "all", label: "全部页面", description: "查看两份资料和早盘策略入口。" },
+        { id: "start-here", label: "先读规则与图例", kind: "front", description: "把图例、入场触发、结构止损和风险提醒先看完。" },
+      ],
     },
     {
       label: "形态图谱",
@@ -129,6 +132,37 @@
     return acc;
   }, {});
 
+  const learningPath = [
+    { section: "start-here", label: "先读规则", note: "图例、触发价、止损、风险声明" },
+    { section: "atlas-a-plus", label: "先学顺势", note: "强趋势、强突破、第一次回踩" },
+    { section: "atlas-a", label: "再学反转", note: "趋势线突破、测试失败、第二信号" },
+    { section: "morning-trend", label: "进入早盘", note: "趋势从开盘、Gap-and-Go、开盘回踩" },
+    { section: "morning-no-trade", label: "最后避坑", note: "开盘乱入场、区间中部、无跟随" },
+  ];
+
+  const curriculumGroups = [
+    {
+      title: "开始前先看",
+      subtitle: "规则、图例、风险",
+      items: ["start-here", "atlas-front", "opening-front"],
+    },
+    {
+      title: "形态图谱主线",
+      subtitle: "从顺势到避坑",
+      items: ["atlas-a-plus", "atlas-a", "atlas-b", "atlas-c", "atlas-d"],
+    },
+    {
+      title: "开盘专题",
+      subtitle: "前 60-90 分钟",
+      items: ["opening-a-plus", "opening-a", "opening-b", "opening-c", "opening-d"],
+    },
+    {
+      title: "早盘策略",
+      subtitle: "按实战流程复盘",
+      items: ["morning-trend", "morning-reversal", "morning-range", "morning-breakout", "morning-filter", "morning-no-trade"],
+    },
+  ];
+
   const gradeSubsections = {
     all: ["all", "atlas-all", "opening-all", "morning-all"],
     "A+": ["atlas-a-plus", "opening-a-plus", "morning-a-plus", "morning-trend"],
@@ -149,11 +183,13 @@
   const els = {
     atlasPdf: document.getElementById("atlasPdf"),
     openingPdf: document.getElementById("openingPdf"),
+    learningPath: document.getElementById("learningPath"),
+    curriculumNav: document.getElementById("curriculumNav"),
+    activeCrumb: document.getElementById("activeCrumb"),
     courseFilters: document.getElementById("courseFilters"),
     directorySelect: document.getElementById("directorySelect"),
     directoryHint: document.getElementById("directoryHint"),
     gradeFilters: document.getElementById("gradeFilters"),
-    morningQuickFilters: document.getElementById("morningQuickFilters"),
     strategyBoard: document.getElementById("strategyBoard"),
     searchInput: document.getElementById("searchInput"),
     resetFilters: document.getElementById("resetFilters"),
@@ -178,10 +214,12 @@
     els.metricPages.textContent = allPages.length;
     els.metricPatterns.textContent = allPages.filter((item) => item.kind === "pattern").length;
     buildDirectorySelect();
-    buildMorningQuickFilters();
+    buildLearningPath();
+    buildCurriculumNav();
     buildStrategyBoard();
     bindEvents();
-    const initial = allPages.find((item) => item.course === "atlas" && item.kind === "pattern") || allPages[0];
+    applySection("start-here", { renderNow: false });
+    const initial = filteredPages()[0] || allPages[0];
     state.selectedId = initial.id;
     render();
   }
@@ -200,15 +238,48 @@
       .join("");
   }
 
-  function buildMorningQuickFilters() {
-    els.morningQuickFilters.innerHTML = morningStrategies
-      .map((strategy) => {
-        const count = countSection(strategy);
-        return `<button type="button" data-section="${strategy.id}">
-          <span>${escapeHtml(strategy.shortLabel)}</span>
-          <strong>${strategy.grade}</strong>
-          <em>${count}</em>
+  function buildLearningPath() {
+    els.learningPath.innerHTML = learningPath
+      .map((step, index) => {
+        const section = sectionById[step.section];
+        return `<button type="button" class="path-step" data-section="${step.section}">
+          <span class="path-index">${index + 1}</span>
+          <span class="path-copy">
+            <strong>${escapeHtml(step.label)}</strong>
+            <small>${escapeHtml(step.note)}</small>
+          </span>
+          <em>${countSection(section)}</em>
         </button>`;
+      })
+      .join("");
+  }
+
+  function buildCurriculumNav() {
+    els.curriculumNav.innerHTML = curriculumGroups
+      .map((group, groupIndex) => {
+        const items = group.items
+          .map((sectionId) => sectionById[sectionId])
+          .filter(Boolean)
+          .map((section) => {
+            const count = countSection(section);
+            return `<button type="button" class="curriculum-item" data-section="${section.id}">
+              <span>
+                <strong>${escapeHtml(humanLabel(section))}</strong>
+                <small>${escapeHtml(section.description || "")}</small>
+              </span>
+              <em>${count}</em>
+            </button>`;
+          })
+          .join("");
+        return `<details class="curriculum-group" ${groupIndex < 2 ? "open" : ""}>
+          <summary>
+            <span>
+              <strong>${escapeHtml(group.title)}</strong>
+              <small>${escapeHtml(group.subtitle)}</small>
+            </span>
+          </summary>
+          <div class="curriculum-items">${items}</div>
+        </details>`;
       })
       .join("");
   }
@@ -267,6 +338,21 @@
   }
 
   function bindEvents() {
+    els.learningPath.addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-section]");
+      if (!btn) return;
+      syncQuery();
+      applySection(btn.dataset.section);
+      document.querySelector(".reader").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    els.curriculumNav.addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-section]");
+      if (!btn) return;
+      syncQuery();
+      applySection(btn.dataset.section);
+    });
+
     els.courseFilters.addEventListener("click", (event) => {
       const btn = event.target.closest("button[data-course]");
       if (!btn) return;
@@ -299,13 +385,6 @@
       state.section = deriveSectionFromCourseAndGrade(state.course, state.grade);
       state.selectedId = null;
       render();
-    });
-
-    els.morningQuickFilters.addEventListener("click", (event) => {
-      const btn = event.target.closest("button[data-section]");
-      if (!btn) return;
-      syncQuery();
-      applySection(btn.dataset.section);
     });
 
     els.strategyBoard.addEventListener("click", (event) => {
@@ -341,13 +420,13 @@
     });
   }
 
-  function applySection(sectionId) {
+  function applySection(sectionId, options = {}) {
     const section = sectionById[sectionId] || sectionById.all;
     state.section = section.id;
     state.course = section.course === "morning" ? "morning" : section.course || "all";
     state.grade = section.grade || "all";
     state.selectedId = null;
-    render();
+    if (options.renderNow !== false) render();
   }
 
   function deriveSectionFromCourseAndGrade(course, grade) {
@@ -385,12 +464,9 @@
 
   function resetAllFilters(event) {
     if (event) event.preventDefault();
-    state.course = "all";
-    state.grade = "all";
-    state.section = "all";
     state.query = "";
-    state.selectedId = null;
     els.searchInput.value = "";
+    applySection("start-here", { renderNow: false });
     render();
   }
 
@@ -474,6 +550,11 @@
     els.directorySelect.value = state.section;
     const section = sectionById[state.section] || sectionById.all;
     els.directoryHint.textContent = section.description || "按课程、等级或早盘策略快速定位。";
+    els.activeCrumb.textContent = humanLabel(section);
+    const activeCurriculumItem = els.curriculumNav.querySelector(`button[data-section="${CSS.escape(state.section)}"]`);
+    if (activeCurriculumItem) {
+      activeCurriculumItem.closest("details")?.setAttribute("open", "");
+    }
 
     const pages = filteredPages();
     if (!state.selectedId || !pages.some((item) => item.id === state.selectedId)) {
@@ -490,7 +571,7 @@
   }
 
   function renderSummary(pages, section) {
-    const sectionLabel = section && section.id !== "all" ? section.label : courseLabels[state.course];
+    const sectionLabel = section && section.id !== "all" ? humanLabel(section) : courseLabels[state.course];
     const gradeText = state.grade === "all" || section.id !== "all" ? "" : ` / ${gradeLabels[state.grade]}`;
     els.resultTitle.textContent = `${sectionLabel}${gradeText}`;
     els.resultCount.textContent = `${pages.length} 个页面`;
@@ -606,6 +687,40 @@
     els.readerNotes.innerHTML = "";
     els.prevBtn.disabled = true;
     els.nextBtn.disabled = true;
+  }
+
+  function humanLabel(section) {
+    const labels = {
+      all: "全部资料",
+      "start-here": "先读规则与图例",
+      "atlas-all": "形态图谱全部",
+      "atlas-a-plus": "强趋势与突破",
+      "atlas-a": "确认后的反转",
+      "atlas-b": "区间与背景交易",
+      "atlas-c": "低概率过滤",
+      "atlas-d": "避坑清单",
+      "atlas-front": "图谱使用说明",
+      "opening-all": "开盘专题全部",
+      "opening-a-plus": "开盘强趋势",
+      "opening-a": "开盘确认反转",
+      "opening-b": "开盘区间与突破",
+      "opening-c": "开盘低概率过滤",
+      "opening-d": "开盘避坑",
+      "opening-front": "开盘阅读框架",
+      "morning-all": "早盘策略全部",
+      "morning-a-plus": "趋势从开盘策略",
+      "morning-a": "开盘反转策略",
+      "morning-b": "区间与突破策略",
+      "morning-c": "低概率过滤策略",
+      "morning-d": "No Trade 开盘陷阱",
+      "morning-trend": "趋势从开盘",
+      "morning-reversal": "开盘反转",
+      "morning-range": "18-20 根K线区间",
+      "morning-breakout": "突破模式",
+      "morning-filter": "低概率过滤",
+      "morning-no-trade": "No Trade 开盘陷阱",
+    };
+    return labels[section?.id] || section?.label || "全部资料";
   }
 
   function escapeHtml(value) {

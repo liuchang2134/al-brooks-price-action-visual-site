@@ -161,7 +161,7 @@ button:hover {
 
 .shell {
   display: grid;
-  grid-template-columns: 310px minmax(0, 1fr);
+  grid-template-columns: 360px minmax(0, 1fr);
   gap: 22px;
   width: min(1760px, calc(100% - 40px));
   margin: 22px auto 48px;
@@ -195,10 +195,15 @@ button:hover {
   padding: 16px;
 }
 
+.sidebar .panel-label {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .intro-panel strong {
   display: block;
   margin-top: 8px;
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.15;
 }
 
@@ -209,6 +214,232 @@ button:hover {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.7;
+}
+
+.panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.active-crumb {
+  max-width: 160px;
+  overflow: hidden;
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: #edf4ff;
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.path-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.path-step {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 10px;
+  min-height: 66px;
+  align-items: center;
+  padding: 10px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.path-step.active {
+  border-color: var(--accent);
+  background: #e8f0ff;
+  color: var(--accent-ink);
+}
+
+.path-index {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #142033;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.path-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.path-copy strong,
+.curriculum-item strong {
+  color: #142033;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.path-copy small,
+.curriculum-item small,
+.curriculum-group summary small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.path-step em,
+.curriculum-item em {
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.curriculum-nav {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.curriculum-group {
+  overflow: hidden;
+  border: 1px solid #dce5f1;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.curriculum-group summary {
+  display: grid;
+  min-height: 54px;
+  align-items: center;
+  padding: 10px 12px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.curriculum-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.curriculum-group summary span {
+  position: relative;
+  display: grid;
+  gap: 3px;
+  padding-right: 24px;
+}
+
+.curriculum-group summary span::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #637083;
+  border-bottom: 2px solid #637083;
+  transform: rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+.curriculum-group[open] summary span::after {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.curriculum-group summary strong {
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.curriculum-items {
+  display: grid;
+  gap: 4px;
+  padding: 6px;
+  border-top: 1px solid #e2e8f2;
+  background: #f8fbff;
+}
+
+.curriculum-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  min-height: 58px;
+  align-items: center;
+  padding: 9px 10px;
+  border-color: transparent;
+  background: transparent;
+  text-align: left;
+}
+
+.curriculum-item:hover {
+  border-color: #cad7eb;
+  background: #ffffff;
+}
+
+.curriculum-item.active {
+  border-color: var(--accent);
+  background: #e8f0ff;
+  color: var(--accent-ink);
+}
+
+.curriculum-item span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.advanced-panel details {
+  margin: 0;
+}
+
+.advanced-panel summary {
+  display: flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: space-between;
+  color: #24334a;
+  font-weight: 900;
+  cursor: pointer;
+  list-style: none;
+}
+
+.advanced-panel summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-panel summary::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #637083;
+  border-bottom: 2px solid #637083;
+  transform: rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+.advanced-panel details[open] summary::after {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.advanced-body {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f2;
+}
+
+.filter-caption {
+  margin: 0 !important;
+  color: #44546a !important;
+  font-size: 12px !important;
+  font-weight: 900;
+  line-height: 1.2 !important;
 }
 
 .segmented,

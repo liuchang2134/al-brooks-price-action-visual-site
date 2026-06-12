@@ -8,7 +8,7 @@
       name="description"
       content="两份中文价格行为教学资料的可视化网站，包含形态图谱、开盘专题、条件胜率等级筛选与大图阅读器。"
     />
-    <link rel="stylesheet" href="./styles.css?v=clear5" />
+    <link rel="stylesheet" href="./styles.css?v=clear6" />
   </head>
   <body>
     <header class="topbar">
@@ -26,45 +26,54 @@
     </header>
 
     <main class="shell">
-      <aside class="sidebar" aria-label="筛选与专题">
+      <aside class="sidebar" aria-label="学习目录与筛选">
         <section class="intro-panel">
-          <p class="panel-label">学习范围</p>
-          <strong>198 页可视化资料</strong>
-          <span>形态图谱、开盘专题、早盘策略三块阅读入口，另含使用说明、图例和风险提醒。</span>
+          <p class="panel-label">学习目录</p>
+          <strong>按阅读顺序进入</strong>
+          <span>先看规则，再学高优先级形态，最后用早盘策略和避坑清单做复盘。</span>
         </section>
 
-        <section class="control-group" aria-label="专题筛选">
-          <p class="panel-label">资料块</p>
-          <div class="segmented" id="courseFilters">
-            <button type="button" class="active" data-course="all">全部</button>
-            <button type="button" data-course="atlas">形态图谱</button>
-            <button type="button" data-course="opening">开盘专题</button>
-            <button type="button" data-course="morning">早盘策略</button>
+        <section class="control-group path-panel" aria-label="推荐学习路径">
+          <p class="panel-label">推荐路径</p>
+          <div id="learningPath" class="path-list"></div>
+        </section>
+
+        <section class="control-group curriculum-panel" aria-label="课程章节目录">
+          <div class="panel-row">
+            <p class="panel-label">课程章节</p>
+            <span id="activeCrumb" class="active-crumb">全部资料</span>
           </div>
-        </section>
-
-        <section class="control-group" aria-label="内容目录">
-          <label class="panel-label" for="directorySelect">内容目录 / 下拉菜单</label>
-          <div class="select-wrap">
-            <select id="directorySelect" class="directory-select"></select>
-          </div>
-          <p id="directoryHint" class="directory-hint">按课程、等级或早盘策略快速定位。</p>
-        </section>
-
-        <section class="control-group" aria-label="等级筛选">
-          <p class="panel-label">条件胜率 / 实战优先级</p>
-          <div class="grade-list" id="gradeFilters"></div>
-        </section>
-
-        <section class="control-group" aria-label="早盘策略目录">
-          <p class="panel-label">早盘策略</p>
-          <div id="morningQuickFilters" class="quick-filter-list"></div>
+          <nav id="curriculumNav" class="curriculum-nav" aria-label="课程章节"></nav>
         </section>
 
         <section class="control-group" aria-label="关键词搜索">
-          <label class="panel-label" for="searchInput">关键词</label>
-          <input id="searchInput" type="search" placeholder="搜索：H2、Gap、交易区间、避坑..." autocomplete="off" />
-          <a id="resetFilters" class="reset-button reset-link" href="#">重置筛选</a>
+          <label class="panel-label" for="searchInput">搜索</label>
+          <input id="searchInput" type="search" placeholder="H2、Gap、交易区间、No Trade..." autocomplete="off" />
+          <a id="resetFilters" class="reset-button reset-link" href="#">清空并回到目录</a>
+        </section>
+
+        <section class="control-group advanced-panel" aria-label="高级筛选">
+          <details>
+            <summary>高级筛选</summary>
+            <div class="advanced-body">
+              <p class="filter-caption">按资料块</p>
+              <div class="segmented" id="courseFilters">
+                <button type="button" class="active" data-course="all">全部</button>
+                <button type="button" data-course="atlas">形态图谱</button>
+                <button type="button" data-course="opening">开盘专题</button>
+                <button type="button" data-course="morning">早盘策略</button>
+              </div>
+
+              <label class="filter-caption" for="directorySelect">快速跳转</label>
+              <div class="select-wrap">
+                <select id="directorySelect" class="directory-select"></select>
+              </div>
+              <p id="directoryHint" class="directory-hint">也可以直接从上方课程章节进入。</p>
+
+              <p class="filter-caption">条件胜率 / 实战优先级</p>
+              <div class="grade-list" id="gradeFilters"></div>
+            </div>
+          </details>
         </section>
 
         <section class="control-group compact">
@@ -131,7 +140,7 @@
       </section>
     </main>
 
-    <script src="./app-data.js?v=clear5"></script>
-    <script src="./app.js?v=clear5"></script>
+    <script src="./app-data.js?v=clear6"></script>
+    <script src="./app.js?v=clear6"></script>
   </body>
 </html>
