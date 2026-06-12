@@ -8,7 +8,7 @@
       name="description"
       content="两份中文价格行为教学资料的可视化网站，包含形态图谱、开盘专题、条件胜率等级筛选与大图阅读器。"
     />
-    <link rel="stylesheet" href="./styles.css?v=clear4" />
+    <link rel="stylesheet" href="./styles.css?v=clear5" />
   </head>
   <body>
     <header class="topbar">
@@ -30,16 +30,25 @@
         <section class="intro-panel">
           <p class="panel-label">学习范围</p>
           <strong>198 页可视化资料</strong>
-          <span>112 个完整形态页 + 73 个开盘形态页，另含使用说明、图例和风险提醒。</span>
+          <span>形态图谱、开盘专题、早盘策略三块阅读入口，另含使用说明、图例和风险提醒。</span>
         </section>
 
         <section class="control-group" aria-label="专题筛选">
-          <p class="panel-label">专题</p>
+          <p class="panel-label">资料块</p>
           <div class="segmented" id="courseFilters">
             <button type="button" class="active" data-course="all">全部</button>
             <button type="button" data-course="atlas">形态图谱</button>
             <button type="button" data-course="opening">开盘专题</button>
+            <button type="button" data-course="morning">早盘策略</button>
           </div>
+        </section>
+
+        <section class="control-group" aria-label="内容目录">
+          <label class="panel-label" for="directorySelect">内容目录 / 下拉菜单</label>
+          <div class="select-wrap">
+            <select id="directorySelect" class="directory-select"></select>
+          </div>
+          <p id="directoryHint" class="directory-hint">按课程、等级或早盘策略快速定位。</p>
         </section>
 
         <section class="control-group" aria-label="等级筛选">
@@ -47,10 +56,15 @@
           <div class="grade-list" id="gradeFilters"></div>
         </section>
 
+        <section class="control-group" aria-label="早盘策略目录">
+          <p class="panel-label">早盘策略</p>
+          <div id="morningQuickFilters" class="quick-filter-list"></div>
+        </section>
+
         <section class="control-group" aria-label="关键词搜索">
           <label class="panel-label" for="searchInput">关键词</label>
           <input id="searchInput" type="search" placeholder="搜索：H2、Gap、交易区间、避坑..." autocomplete="off" />
-          <a id="resetFilters" class="reset-button reset-link" href="./" onclick="location.href='./?reset=' + Date.now(); return false;">重置筛选</a>
+          <a id="resetFilters" class="reset-button reset-link" href="#">重置筛选</a>
         </section>
 
         <section class="control-group compact">
@@ -71,8 +85,19 @@
           <div class="metrics" aria-label="资料统计">
             <div><strong id="metricPages">198</strong><span>页面</span></div>
             <div><strong id="metricPatterns">185</strong><span>形态</span></div>
-            <div><strong>2</strong><span>专题</span></div>
+            <div><strong>3</strong><span>资料块</span></div>
           </div>
+        </section>
+
+        <section class="strategy-board" aria-label="早盘策略独立目录">
+          <div class="strategy-board-head">
+            <div>
+              <p class="panel-label">早盘策略</p>
+              <h2>开盘前 60-90 分钟独立学习块</h2>
+            </div>
+            <p>把开盘专题拆成趋势从开盘、Gap-and-Go、开盘反转、18-20 根K线区间、失败突破和 No Trade 过滤。</p>
+          </div>
+          <div id="strategyBoard" class="strategy-grid"></div>
         </section>
 
         <section class="reader" aria-live="polite">
@@ -106,7 +131,7 @@
       </section>
     </main>
 
-    <script src="./app-data.js?v=clear4"></script>
-    <script src="./app.js?v=clear4"></script>
+    <script src="./app-data.js?v=clear5"></script>
+    <script src="./app.js?v=clear5"></script>
   </body>
 </html>
