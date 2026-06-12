@@ -27,7 +27,7 @@
     user: null,
     mode: "loading",
     syncMessage: "正在连接学习数据库",
-    activeTab: "path",
+    activeTab: "starter",
     currentPage: null,
     progress: new Map(),
     bookmarks: new Map(),
@@ -42,14 +42,60 @@
     reviewDraft: null,
   };
 
-  const tabs = [
-    { id: "path", label: "学习路径" },
-    { id: "glossary", label: "术语词典" },
-    { id: "bar", label: "逐K训练" },
-    { id: "noTrade", label: "No Trade" },
-    { id: "openingTree", label: "开盘决策树" },
-    { id: "compare", label: "形态对比" },
-    { id: "review", label: "复盘与下载" },
+  const primaryTasks = [
+    {
+      id: "starter",
+      label: "从零开始学",
+      eyebrow: "先建立语言",
+      description: "术语、图例、触发规则和九阶段学习路径。",
+      outcome: "适合第一次打开网站，先知道每张图怎么看。",
+      cta: "开始基础学习",
+    },
+    {
+      id: "bar",
+      label: "练一组逐K判断",
+      eyebrow: "看一根，判断一次",
+      description: "隐藏未来K线，回答趋势、区间、触发还是等待。",
+      outcome: "适合训练 Brooks 式 bar-by-bar 阅读。",
+      cta: "开始逐K训练",
+    },
+    {
+      id: "noTrade",
+      label: "训练不交易",
+      eyebrow: "先学会过滤",
+      description: "区间中部、弱信号、无跟随、目标空间不足。",
+      outcome: "适合减少追涨杀跌和低质量入场。",
+      cta: "进入 No Trade",
+    },
+    {
+      id: "openingTree",
+      label: "练开盘流程",
+      eyebrow: "前 60-90 分钟",
+      description: "前5分钟、前15分钟、18-20根K线和突破确认。",
+      outcome: "适合早盘快速决策，不凭第一根K线冲动。",
+      cta: "打开开盘流程",
+    },
+    {
+      id: "review",
+      label: "复盘当前形态",
+      eyebrow: "保存成复盘记录",
+      description: "自动带入当前页背景、触发、止损、目标和放弃条件。",
+      outcome: "适合把资料页变成自己的复盘本。",
+      cta: "生成复盘草稿",
+    },
+  ];
+
+  const supportTools = [
+    {
+      id: "glossary",
+      label: "术语速查",
+      description: "Signal Bar、H2、MTR、Measured Move 等中英对照。",
+    },
+    {
+      id: "compare",
+      label: "形态对比",
+      description: "好的 H2 vs 差的 H2，强突破 vs 弱突破。",
+    },
   ];
 
   const pathStages = [
@@ -456,11 +502,9 @@
 
   function bindEvents() {
     els.tabs.addEventListener("click", (event) => {
-      const btn = event.target.closest("button[data-tab]");
+      const btn = event.target.closest("button[data-module]");
       if (!btn) return;
-      runtime.activeTab = btn.dataset.tab;
-      renderTabs();
-      renderStudyPanel();
+      openModule(btn.dataset.module, { scroll: true });
     });
 
     els.panel.addEventListener("click", handlePanelClick);
@@ -475,20 +519,69 @@
     });
   }
 
+  function openModule(module, options = {}) {
+    runtime.activeTab = module || "starter";
+    renderTabs();
+    renderStudyPanel();
+    if (options.scroll) {
+      document.getElementById("studySystem")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function getRecommendedNextStep(page) {
+    if (!page) return { label: "先选形态页", module: "starter" };
+    if (page.course === "opening") return { label: "练开盘流程", module: "openingTree" };
+    if (page.grade === "C" || page.grade === "D") return { label: "做 No Trade 训练", module: "noTrade" };
+    if (/H1|H2|L1|L2|突破|回踩|趋势|区间/.test(page.title)) return { label: "看形态对比", module: "compare" };
+    return { label: "练逐K判断", module: "bar" };
+  }
+
   function renderTabs() {
-    els.tabs.innerHTML = tabs
-      .map(
-        (tab) =>
-          `<button type="button" class="${tab.id === runtime.activeTab ? "active" : ""}" data-tab="${tab.id}">${escapeHtml(
-            tab.label
-          )}</button>`
-      )
-      .join("");
+    const current = runtime.currentPage;
+    const learned = [...runtime.progress.values()].filter((item) => item.status === "mastered").length;
+    const review = [...runtime.progress.values()].filter((item) => item.status === "review").length;
+    els.tabs.innerHTML = `<div class="task-board">
+      <div class="task-board-head">
+        <div>
+          <p class="panel-label">今天你要做什么？</p>
+          <h3>选一个任务开始，网站会把资料页、训练和复盘串起来。</h3>
+        </div>
+        <div class="task-progress-card">
+          <span class="sync-pill ${runtime.mode}">${escapeHtml(runtime.syncMessage)}</span>
+          <strong>${learned} 已学 / ${review} 复盘中</strong>
+          <small>${current ? escapeHtml(shortTitle(current.title)) : "先选一页形态图"}</small>
+        </div>
+      </div>
+      <div class="task-card-grid">
+        ${primaryTasks
+          .map(
+            (task) => `<button type="button" class="task-card ${task.id === runtime.activeTab ? "active" : ""}" data-module="${task.id}">
+              <span>${escapeHtml(task.eyebrow)}</span>
+              <strong>${escapeHtml(task.label)}</strong>
+              <small>${escapeHtml(task.description)}</small>
+              <em>${escapeHtml(task.cta)}</em>
+            </button>`
+          )
+          .join("")}
+      </div>
+      <div class="support-tools">
+        <span>辅助工具</span>
+        ${supportTools
+          .map(
+            (tool) => `<button type="button" class="${tool.id === runtime.activeTab ? "active" : ""}" data-module="${tool.id}">
+              <strong>${escapeHtml(tool.label)}</strong>
+              <small>${escapeHtml(tool.description)}</small>
+            </button>`
+          )
+          .join("")}
+      </div>
+    </div>`;
   }
 
   function renderStudyPanel() {
     const renderers = {
-      path: renderPath,
+      starter: renderStarter,
+      path: renderStarter,
       glossary: renderGlossary,
       bar: renderBarTraining,
       noTrade: renderNoTrade,
@@ -496,11 +589,100 @@
       compare: renderCompare,
       review: renderReview,
     };
-    els.panel.innerHTML = (renderers[runtime.activeTab] || renderPath)();
+    els.panel.innerHTML = `${renderCurrentPageActions()}${(renderers[runtime.activeTab] || renderStarter)()}`;
   }
 
-  function renderPath() {
-    return `<div class="module-grid path-map">
+  function renderCurrentPageActions() {
+    const page = runtime.currentPage;
+    if (!page) {
+      return `<section class="current-page-workbench empty-current">
+        <div>
+          <p class="panel-label">当前页可以做什么？</p>
+          <h3>先从左侧目录选择一张形态图。</h3>
+          <p>选中页面后，这里会出现收藏、错题本、复盘草稿和相似训练入口。</p>
+        </div>
+      </section>`;
+    }
+    if (page.kind !== "pattern") {
+      return `<section class="current-page-workbench intro-current">
+        <div class="current-page-copy">
+          <p class="panel-label">当前是说明页</p>
+          <h3>${escapeHtml(shortTitle(page.title))}</h3>
+          <p>先读规则、图例、入场触发和风险提醒，再进入形态训练。</p>
+        </div>
+        <div class="current-page-actions intro-actions">
+          <button type="button" data-action="open-module" data-module="starter">看学习路径</button>
+          <button type="button" data-action="open-module" data-module="glossary">查术语</button>
+          <button type="button" data-action="go-page" data-page="atlas-001">进入第一个形态</button>
+        </div>
+        <ol class="current-page-steps">
+          <li>先确认图例和触发规则。</li>
+          <li>再理解条件胜率不是固定胜率。</li>
+          <li>最后进入 A+ 顺势形态。</li>
+        </ol>
+      </section>`;
+    }
+    const progress = runtime.progress.get(page.id);
+    const bookmarked = runtime.bookmarks.has(page.id);
+    const statusText = {
+      not_started: "未开始",
+      learning: "学习中",
+      review: "复盘中",
+      mastered: "已学",
+      skipped: "No Trade",
+    }[progress?.status || "not_started"];
+    const recommended = getRecommendedNextStep(page);
+    return `<section class="current-page-workbench">
+      <div class="current-page-copy">
+        <p class="panel-label">当前页可以做什么？</p>
+        <h3>${escapeHtml(shortTitle(page.title))}</h3>
+        <p>${escapeHtml(page.grade)} / ${escapeHtml(page.cycle || "市场周期待判断")} / ${escapeHtml(statusText)}</p>
+      </div>
+      <div class="current-page-actions">
+        <button type="button" class="${bookmarked ? "active" : ""}" data-action="quick-bookmark">${bookmarked ? "已收藏" : "收藏本页"}</button>
+        <button type="button" data-action="quick-mastered">标记已学</button>
+        <button type="button" data-action="quick-mistake">加入错题本</button>
+        <button type="button" data-action="quick-draft">生成复盘</button>
+        <button type="button" data-action="quick-next">${escapeHtml(recommended.label)}</button>
+      </div>
+      <ol class="current-page-steps">
+        <li>先判断市场周期。</li>
+        <li>再找信号棒和触发价。</li>
+        <li>最后检查结构止损和第一目标区。</li>
+      </ol>
+    </section>`;
+  }
+
+  function renderStarter() {
+    const coreTerms = glossary.slice(0, 4);
+    return `<div class="module-stack">
+      <section class="study-card guided-intro starter-intro">
+        <div>
+          <p class="panel-label">从零开始学</p>
+          <h3>先把“看图语言”统一，再进入 198 页资料。</h3>
+          <ol>
+            <li>先看术语和图例，知道信号棒、触发价、结构止损。</li>
+            <li>再按阶段进入趋势、突破、回调、反转、区间和开盘。</li>
+            <li>每看一页，都用下方检查清单判断是否值得交易。</li>
+          </ol>
+        </div>
+        <div class="guided-actions">
+          <button type="button" data-action="open-module" data-module="glossary">先看术语速查</button>
+          <button type="button" data-action="go-section" data-section="start-here">打开规则说明页</button>
+        </div>
+      </section>
+      <div class="starter-term-row">
+        ${coreTerms
+          .map(
+            (item) => `<article class="study-card starter-term">
+              <div class="mini-chart">${renderMiniSvg(item.diagram, { label: item.term })}</div>
+              <strong>${escapeHtml(item.term)}</strong>
+              <span>${escapeHtml(item.cn)}</span>
+            </article>`
+          )
+          .join("")}
+      </div>
+      <div class="module-grid path-map">
       ${pathStages
         .map(
           (stage, index) => `<article class="study-card path-stage">
@@ -515,6 +697,7 @@
           </article>`
         )
         .join("")}
+      </div>
     </div>`;
   }
 
@@ -522,6 +705,17 @@
     const query = runtime.glossaryQuery.trim().toLowerCase();
     const items = glossary.filter((item) => !query || `${item.term} ${item.cn} ${item.meaning}`.toLowerCase().includes(query));
     return `<div class="module-stack">
+      <section class="study-card guided-intro">
+        <div>
+          <p class="panel-label">术语速查</p>
+          <h3>看不懂缩写时，先在这里对齐语言。</h3>
+          <ol>
+            <li>先看英文术语和中文解释。</li>
+            <li>再看小K线图确认它在图上长什么样。</li>
+            <li>最后看“新手常误解”，避免把术语当入场指令。</li>
+          </ol>
+        </div>
+      </section>
       <div class="module-toolbar">
         <div>
           <h3>术语词典</h3>
@@ -549,7 +743,23 @@
     const question = scenario.questions[runtime.scenarioStep] || scenario.questions[0];
     const source = findPage(scenario.sourceId);
     const answered = runtime.answered;
-    return `<div class="bar-training">
+    return `<div class="module-stack">
+      <section class="study-card guided-intro training-intro">
+        <div>
+          <p class="panel-label">逐K训练怎么用</p>
+          <h3>目标不是猜涨跌，是训练“现在该交易还是等待”。</h3>
+          <ol>
+            <li>只看已经出现的K线，未来K线会被隐藏。</li>
+            <li>回答市场周期、信号棒和是否触发。</li>
+            <li>看标准讲解，再进入下一根。</li>
+          </ol>
+        </div>
+        <div class="guided-actions">
+          <button type="button" data-action="reset-scenario">从本组第一题开始</button>
+          ${source ? `<button type="button" data-action="go-page" data-page="${source.id}">查看原形态页</button>` : ""}
+        </div>
+      </section>
+      <div class="bar-training">
       <aside class="scenario-list">
         ${barScenarios
           .map(
@@ -568,7 +778,7 @@
             <h3>${escapeHtml(scenario.title)}</h3>
             <p>隐藏未来K线，逐根判断市场周期、信号棒、触发和是否交易。</p>
           </div>
-          ${source ? `<button type="button" data-action="go-page" data-page="${source.id}">查看原形态</button>` : ""}
+          ${source ? `<button type="button" data-action="go-page" data-page="${source.id}">打开资料页</button>` : ""}
         </div>
         <div class="large-mini-chart">${renderMiniSvg(scenario.diagram, { reveal: question.visible, label: "Bar-by-Bar" })}</div>
         <div class="question-box">
@@ -596,11 +806,23 @@
           }
         </div>
       </section>
+      </div>
     </div>`;
   }
 
   function renderNoTrade() {
     return `<div class="module-stack">
+      <section class="study-card guided-intro">
+        <div>
+          <p class="panel-label">No Trade 怎么用</p>
+          <h3>这里专门练“不做”，不是找隐藏买卖点。</h3>
+          <ol>
+            <li>先读“为什么不做”，判断低质量来自位置、背景还是风险收益。</li>
+            <li>点“查看对应页”看完整K线图。</li>
+            <li>把最容易犯的错误加入错题本，复盘时重点看。</li>
+          </ol>
+        </div>
+      </section>
       <div class="module-toolbar">
         <div>
           <h3>No Trade 专区</h3>
@@ -630,7 +852,23 @@
 
   function renderOpeningTree() {
     const node = decisionTree[runtime.treeNode] || decisionTree.start;
-    return `<div class="opening-tree-layout">
+    return `<div class="module-stack">
+      <section class="study-card guided-intro opening-intro">
+        <div>
+          <p class="panel-label">开盘流程怎么用</p>
+          <h3>按时间走，不凭第一根K线决定全天方向。</h3>
+          <ol>
+            <li>前 5 分钟只观察开盘价、缺口和第一组K线。</li>
+            <li>前 15 分钟判断趋势从开盘还是开盘区间。</li>
+            <li>18-20 根K线后，只在确认突破或清晰失败突破时行动。</li>
+          </ol>
+        </div>
+        <div class="guided-actions">
+          <button type="button" data-action="tree" data-node="start">回到第一步</button>
+          <button type="button" data-action="go-section" data-section="morning-trend">打开早盘策略</button>
+        </div>
+      </section>
+      <div class="opening-tree-layout">
       <section class="study-card tree-card">
         <p class="panel-label">Opening Decision Tree</p>
         <h3>${escapeHtml(node.title)}</h3>
@@ -656,11 +894,24 @@
           <li>目标空间不足、重叠太多、无跟随时进入 No Trade。</li>
         </ol>
       </section>
+      </div>
     </div>`;
   }
 
   function renderCompare() {
-    return `<div class="module-grid compare-grid">
+    return `<div class="module-stack">
+      <section class="study-card guided-intro">
+        <div>
+          <p class="panel-label">形态对比怎么用</p>
+          <h3>不要只记名称，要比较“好形态”和“差形态”的背景差异。</h3>
+          <ol>
+            <li>先看左侧高质量条件。</li>
+            <li>再看右侧为什么要降级或放弃。</li>
+            <li>最后打开对应资料页，回到大图验证。</li>
+          </ol>
+        </div>
+      </section>
+      <div class="module-grid compare-grid">
       ${comparisons
         .map(
           (item) => `<article class="study-card compare-card">
@@ -680,6 +931,7 @@
           </article>`
         )
         .join("")}
+      </div>
     </div>`;
   }
 
@@ -697,8 +949,9 @@
       <section class="study-card review-form-card">
         <div class="module-toolbar compact-toolbar">
           <div>
-            <h3>实盘复盘模板</h3>
-            <p>保存历史复盘记录，也可以导出 Markdown 或 TXT。</p>
+            <p class="panel-label">我的复盘本</p>
+            <h3>把当前形态变成自己的复盘记录。</h3>
+            <p>先选一张形态页，再点“生成复盘”。表单会自动带入背景、触发、止损和目标，你只补结果和教训。</p>
           </div>
           <span class="sync-pill ${runtime.mode}">${escapeHtml(runtime.syncMessage)}</span>
         </div>
@@ -763,10 +1016,16 @@
     const btn = event.target.closest("button[data-action]");
     if (!btn) return;
     const action = btn.dataset.action;
+    if (action === "open-module") openModule(btn.dataset.module, { scroll: false });
     if (action === "go-section") app?.applySection?.(btn.dataset.section);
     if (action === "go-page") goToPage(btn.dataset.page);
     if (action === "scenario") {
       runtime.activeScenario = btn.dataset.scenario;
+      runtime.scenarioStep = 0;
+      runtime.answered = null;
+      renderStudyPanel();
+    }
+    if (action === "reset-scenario") {
       runtime.scenarioStep = 0;
       runtime.answered = null;
       renderStudyPanel();
@@ -785,6 +1044,17 @@
     if (action === "download-current-txt") downloadCurrentReview("txt");
     if (action === "download-all-md") downloadAllJournals("md");
     if (action === "download-all-txt") downloadAllJournals("txt");
+    if (action === "quick-bookmark" && runtime.currentPage) toggleBookmark(runtime.currentPage);
+    if (action === "quick-mastered" && runtime.currentPage) saveProgress(runtime.currentPage, "mastered");
+    if (action === "quick-mistake" && runtime.currentPage) addMistakeFromPage(runtime.currentPage.id, "当前页易错");
+    if (action === "quick-draft" && runtime.currentPage) {
+      runtime.reviewDraft = draftFromPage(runtime.currentPage);
+      openModule("review", { scroll: false });
+    }
+    if (action === "quick-next" && runtime.currentPage) {
+      const next = getRecommendedNextStep(runtime.currentPage);
+      openModule(next.module, { scroll: false });
+    }
   }
 
   function handlePanelInput(event) {
@@ -813,9 +1083,7 @@
     if (action === "mistake") addMistakeFromPage(page.id, "当前页易错");
     if (action === "draft") {
       runtime.reviewDraft = draftFromPage(page);
-      runtime.activeTab = "review";
-      renderTabs();
-      renderStudyPanel();
+      openModule("review", { scroll: false });
       document.getElementById("studySystem")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
@@ -835,9 +1103,7 @@
     if (!btn || !runtime.currentPage) return;
     if (btn.dataset.checkAction === "draft") {
       runtime.reviewDraft = draftFromPage(runtime.currentPage);
-      runtime.activeTab = "review";
-      renderTabs();
-      renderStudyPanel();
+      openModule("review", { scroll: false });
       document.getElementById("studySystem")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     if (btn.dataset.checkAction === "download") downloadChecklist(runtime.currentPage);
@@ -852,6 +1118,8 @@
     }
     renderReaderStatus();
     renderPretradeChecklist();
+    renderTabs();
+    renderStudyPanel();
   }
 
   async function connectStorage() {
@@ -947,7 +1215,11 @@
     };
     runtime.progress.set(page.id, item);
     persistLocal();
-    if (!options.silent) renderReaderStatus();
+    if (!options.silent) {
+      renderReaderStatus();
+      renderTabs();
+      renderStudyPanel();
+    }
 
     if (runtime.mode === "cloud" && runtime.user) {
       const row = { ...item, owner_id: runtime.user.id };
@@ -973,6 +1245,8 @@
       runtime.bookmarks.delete(page.id);
       persistLocal();
       renderReaderStatus();
+      renderTabs();
+      renderStudyPanel();
       if (runtime.mode === "cloud" && runtime.user) {
         await runtime.client.from("bookmarks").delete().eq("owner_id", runtime.user.id).eq("item_type", "page").eq("item_id", page.id);
       }
@@ -991,6 +1265,8 @@
     runtime.bookmarks.set(page.id, item);
     persistLocal();
     renderReaderStatus();
+    renderTabs();
+    renderStudyPanel();
     if (runtime.mode === "cloud" && runtime.user) {
       await runtime.client.from("bookmarks").upsert({ ...item, owner_id: runtime.user.id }, { onConflict: "owner_id,item_type,item_id" });
     }
@@ -1202,9 +1478,7 @@
       lesson: "",
       tags: "开盘, 决策树, No Trade",
     };
-    runtime.activeTab = "review";
-    renderTabs();
-    renderStudyPanel();
+    openModule("review", { scroll: false });
   }
 
   function collectReviewForm() {
