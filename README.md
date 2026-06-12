@@ -4,6 +4,12 @@
 
 ## 打开网站
 
+公网访问：
+
+```text
+https://liuchang2134.github.io/al-brooks-price-action-visual-site/
+```
+
 本地预览：
 
 ```powershell
@@ -23,6 +29,12 @@ http://127.0.0.1:8877/al_brooks_visual_site/
 - `al_brooks_visual_site/`：可视化学习网站
 - `output_al_brooks_price_action_atlas/`：形态图谱页面图与高清K线图
 - `output_al_brooks_opening_price_action/`：开盘专题页面图与高清K线图
+
+PDF 公网下载资产：
+
+```text
+https://github.com/liuchang2134/al-brooks-price-action-visual-site/releases/tag/v1.0.0
+```
 
 ## 声明
 
