@@ -342,15 +342,14 @@
       const btn = event.target.closest("button[data-section]");
       if (!btn) return;
       syncQuery();
-      applySection(btn.dataset.section);
-      document.querySelector(".reader").scrollIntoView({ behavior: "smooth", block: "start" });
+      applySection(btn.dataset.section, { focusReader: true });
     });
 
     els.curriculumNav.addEventListener("click", (event) => {
       const btn = event.target.closest("button[data-section]");
       if (!btn) return;
       syncQuery();
-      applySection(btn.dataset.section);
+      applySection(btn.dataset.section, { focusReader: true });
     });
 
     els.courseFilters.addEventListener("click", (event) => {
@@ -363,18 +362,19 @@
       state.section = deriveSectionFromCourseAndGrade(course, "all");
       state.selectedId = null;
       render();
+      focusReader();
     });
 
     els.directorySelect.addEventListener("change", (event) => {
       syncQuery();
-      applySection(event.target.value);
+      applySection(event.target.value, { focusReader: true });
     });
 
     els.gradeFilters.addEventListener("click", (event) => {
       const sectionBtn = event.target.closest("button[data-section]");
       if (sectionBtn) {
         syncQuery();
-        applySection(sectionBtn.dataset.section);
+        applySection(sectionBtn.dataset.section, { focusReader: true });
         return;
       }
 
@@ -385,14 +385,14 @@
       state.section = deriveSectionFromCourseAndGrade(state.course, state.grade);
       state.selectedId = null;
       render();
+      focusReader();
     });
 
     els.strategyBoard.addEventListener("click", (event) => {
       const btn = event.target.closest("button[data-section]");
       if (!btn) return;
       syncQuery();
-      applySection(btn.dataset.section);
-      document.querySelector(".reader").scrollIntoView({ behavior: "smooth", block: "start" });
+      applySection(btn.dataset.section, { focusReader: true });
     });
 
     els.searchInput.addEventListener("input", (event) => {
@@ -426,7 +426,20 @@
     state.course = section.course === "morning" ? "morning" : section.course || "all";
     state.grade = section.grade || "all";
     state.selectedId = null;
-    if (options.renderNow !== false) render();
+    if (options.renderNow !== false) {
+      render();
+      if (options.focusReader) focusReader();
+    }
+  }
+
+  function focusReader() {
+    requestAnimationFrame(() => {
+      const reader = document.querySelector(".reader");
+      if (!reader) return;
+      const stickyOffset = 92;
+      const top = reader.getBoundingClientRect().top + window.scrollY - stickyOffset;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    });
   }
 
   function deriveSectionFromCourseAndGrade(course, grade) {
@@ -468,6 +481,7 @@
     els.searchInput.value = "";
     applySection("start-here", { renderNow: false });
     render();
+    focusReader();
   }
 
   function filteredPages() {
@@ -796,7 +810,7 @@
     getState: () => ({ ...state }),
     getSelectedPage: () => allPages.find((page) => page.id === state.selectedId) || null,
     selectPage: (id, scrollReader = true) => selectPage(id, scrollReader),
-    applySection: (sectionId) => applySection(sectionId),
+    applySection: (sectionId) => applySection(sectionId, { focusReader: true }),
     filteredPages: () => filteredPages(),
   };
 
