@@ -8,7 +8,7 @@
       name="description"
       content="两份中文价格行为教学资料的可视化网站，包含形态图谱、开盘专题、条件胜率等级筛选与大图阅读器。"
     />
-    <link rel="stylesheet" href="./styles.css?v=clear6" />
+    <link rel="stylesheet" href="./styles.css?v=clear8" />
   </head>
   <body>
     <header class="topbar">
@@ -98,6 +98,18 @@
           </div>
         </section>
 
+        <section class="study-system" id="studySystem" aria-label="学习系统">
+          <div class="study-system-head">
+            <div>
+              <p class="panel-label">学习系统</p>
+              <h2>从看图，到逐K判断、避坑和复盘。</h2>
+            </div>
+            <p>新增路径地图、术语词典、逐K训练、No Trade、开盘决策树、形态对比、进度、风险教学和复盘模板。</p>
+          </div>
+          <div id="studyTabs" class="study-tabs" role="tablist" aria-label="学习系统模块"></div>
+          <div id="studyPanel" class="study-panel"></div>
+        </section>
+
         <section class="strategy-board" aria-label="早盘策略独立目录">
           <div class="strategy-board-head">
             <div>
@@ -121,11 +133,13 @@
               <a id="openImageBtn" class="button-link" href="#" target="_blank" rel="noreferrer">打开高清K线</a>
               <a id="openPageBtn" class="button-link secondary" href="#" target="_blank" rel="noreferrer">整页PDF版</a>
             </div>
+            <div id="readerStatus" class="reader-status"></div>
           </div>
           <div class="image-stage">
             <img id="readerImage" alt="当前学习页面大图" />
           </div>
           <div id="readerNotes" class="reader-notes"></div>
+          <div id="pretradeChecklist" class="pretrade-checklist"></div>
         </section>
 
         <section class="library-head" aria-label="列表状态">
@@ -140,7 +154,9 @@
       </section>
     </main>
 
-    <script src="./app-data.js?v=clear6"></script>
-    <script src="./app.js?v=clear6"></script>
+    <script src="./app-data.js?v=clear8"></script>
+    <script src="./app.js?v=clear8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./learning-system.js?v=clear8"></script>
   </body>
 </html>

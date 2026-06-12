@@ -657,6 +657,16 @@
     els.prevBtn.disabled = index <= 0;
     els.nextBtn.disabled = index === -1 || index >= pages.length - 1;
 
+    window.dispatchEvent(
+      new CustomEvent("learning-site:page-selected", {
+        detail: {
+          item,
+          strategy,
+          state: { ...state },
+        },
+      })
+    );
+
     if (scrollReader) {
       document.querySelector(".reader").scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -731,6 +741,15 @@
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
   }
+
+  window.LEARNING_SITE_APP = {
+    pages: allPages,
+    getState: () => ({ ...state }),
+    getSelectedPage: () => allPages.find((page) => page.id === state.selectedId) || null,
+    selectPage: (id, scrollReader = true) => selectPage(id, scrollReader),
+    applySection: (sectionId) => applySection(sectionId),
+    filteredPages: () => filteredPages(),
+  };
 
   init();
 })();

@@ -29,12 +29,21 @@ http://127.0.0.1:8877/al_brooks_visual_site/
 - `al_brooks_visual_site/`：可视化学习网站
 - `output_al_brooks_price_action_atlas/`：形态图谱页面图与高清K线图
 - `output_al_brooks_opening_price_action/`：开盘专题页面图与高清K线图
+- `supabase_learning_schema.sql`：学习进度、收藏、错题、逐K训练和复盘记录的 Supabase 表结构
 
 PDF 公网下载资产：
 
 ```text
 https://github.com/liuchang2134/al-brooks-price-action-visual-site/releases/tag/v1.0.0
 ```
+
+## 学习记录后端
+
+网站使用 Supabase 保存匿名学习记录。部署或重建后端时：
+
+1. 在 Supabase SQL Editor 运行 `supabase_learning_schema.sql`。
+2. 在 Authentication 设置中开启 Anonymous Sign-Ins。
+3. 前端只使用 Supabase URL 和 publishable key，不要把数据库密码或 service role key 放进网站代码。
 
 ## 声明
 
