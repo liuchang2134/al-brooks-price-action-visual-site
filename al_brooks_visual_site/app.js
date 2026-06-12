@@ -203,6 +203,7 @@
     readerNotes: document.getElementById("readerNotes"),
     openImageBtn: document.getElementById("openImageBtn"),
     openPageBtn: document.getElementById("openPageBtn"),
+    focusChartBtn: document.getElementById("focusChartBtn"),
     prevBtn: document.getElementById("prevBtn"),
     nextBtn: document.getElementById("nextBtn"),
     metricPages: document.getElementById("metricPages"),
@@ -413,6 +414,7 @@
 
     els.prevBtn.addEventListener("click", () => moveSelection(-1));
     els.nextBtn.addEventListener("click", () => moveSelection(1));
+    els.focusChartBtn.addEventListener("click", toggleChartFocus);
 
     document.addEventListener("keydown", (event) => {
       if (event.target.matches("input, select, textarea")) return;
@@ -697,6 +699,7 @@
     els.readerMeta.textContent = metaParts.join(" / ");
     els.readerTitle.textContent = item.title;
     renderReaderVisual(item);
+    updateFocusButton(item);
 
     const noteEntries = item.details
       ? Object.entries(item.details)
@@ -760,6 +763,19 @@
     els.openImageBtn.textContent = "打开高清K线";
     els.openPageBtn.href = item.pageImage || item.full;
     els.openPageBtn.style.display = "";
+  }
+
+  function toggleChartFocus() {
+    document.body.classList.toggle("chart-focus-mode");
+    const current = allPages.find((page) => page.id === state.selectedId);
+    updateFocusButton(current);
+    focusReader();
+  }
+
+  function updateFocusButton(item) {
+    const active = document.body.classList.contains("chart-focus-mode");
+    els.focusChartBtn.textContent = active ? "退出专注" : item?.kind === "front" ? "专注阅读" : "专注看图";
+    els.focusChartBtn.setAttribute("aria-pressed", active ? "true" : "false");
   }
 
   function renderFrontReader(item) {
@@ -965,6 +981,7 @@
     els.readerImage.hidden = false;
     els.readerTextPage.hidden = true;
     els.readerTextPage.innerHTML = "";
+    updateFocusButton(null);
     els.openImageBtn.href = "#";
     els.openPageBtn.href = "#";
     els.readerNotes.innerHTML = "";

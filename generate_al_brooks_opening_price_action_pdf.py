@@ -259,9 +259,9 @@ def plot_opening_chart(p):
     x = np.arange(n)
     fig = plt.figure(figsize=(19.0, 7.27), dpi=300)
     ax = fig.add_axes([0.055, 0.115, 0.90, 0.78])
-    ax.set_facecolor("#ffffff")
+    ax.set_facecolor("#fbfdff")
     fig.patch.set_facecolor("#ffffff")
-    ax.grid(True, color=base.GRID, linewidth=0.75, alpha=0.95)
+    ax.grid(True, color=base.GRID, linewidth=1.05, alpha=0.92)
     ax.set_axisbelow(True)
 
     or_end = min(20, n - 1)
@@ -270,21 +270,24 @@ def plot_opening_chart(p):
     if p.uses_18_20:
         ax.axvspan(-0.5, or_end - 0.5, color="#dbeafe", alpha=0.28)
 
-    width = 0.66
+    width = 0.72
     for i in range(n):
         color = base.GREEN if c[i] >= o[i] else base.RED
-        ax.vlines(x[i], l[i], h[i], color=color, linewidth=1.85, alpha=0.98)
+        ax.vlines(x[i], l[i], h[i], color=color, linewidth=2.25, alpha=0.98)
         bottom = min(o[i], c[i])
         height = abs(c[i] - o[i])
         if height < 0.05:
-            ax.hlines(c[i], x[i] - width / 2, x[i] + width / 2, color=color, linewidth=2.8)
+            ax.hlines(c[i], x[i] - width / 2, x[i] + width / 2, color=color, linewidth=3.4)
         else:
-            ax.add_patch(plt.Rectangle((x[i] - width / 2, bottom), width, height, facecolor=color, edgecolor=color, linewidth=1.15))
+            ax.add_patch(plt.Rectangle((x[i] - width / 2, bottom), width, height, facecolor=color, edgecolor=color, linewidth=1.35))
 
     ema = base.ema(c)
     ax.plot(x, ema, color="#d89000", linewidth=3.0, label="20 EMA / VWAP参考")
     atr = float(np.mean(h - l))
     y_min, y_max = float(min(l.min(), prior_close) - 2.0 * atr), float(max(h.max(), prior_close) + 2.25 * atr)
+    vol_height = (h - l) / max(float(np.max(h - l)), 1e-6) * (y_max - y_min) * 0.105
+    ax.bar(x, vol_height, bottom=y_min, width=0.72, color=[base.GREEN if c[i] >= o[i] else base.RED for i in range(n)], alpha=0.16, linewidth=0, zorder=0)
+    ax.axhline(c[-1], color="#334155", linestyle=(0, (2, 5)), linewidth=1.45, alpha=0.55)
     if p.uses_18_20:
         ax.text(1, y_max - 0.80 * atr, "18-20根开盘观察区间", fontproperties=base.MPL_FONT_BOLD, fontsize=13, color=base.BLUE)
     ax.axhline(open_price, color="#111827", linestyle=(0, (7, 5)), linewidth=2.5)
@@ -305,9 +308,9 @@ def plot_opening_chart(p):
         ax.text(1, or_low - 0.60 * atr, "Opening Range Low", fontproperties=base.MPL_FONT_BOLD, fontsize=12.5, color="#36475b")
 
     def label(text, xy, xytext, color=base.BLUE):
-        ax.annotate(text, xy=xy, xytext=xytext, fontproperties=base.MPL_FONT_BOLD, fontsize=13, color=color,
-                    arrowprops=dict(arrowstyle="->", lw=2.15, color=color, shrinkA=4, shrinkB=3),
-                    bbox=dict(boxstyle="round,pad=0.34", fc="white", ec=color, lw=1.55, alpha=0.96))
+        ax.annotate(text, xy=xy, xytext=xytext, fontproperties=base.MPL_FONT_BOLD, fontsize=15, color=color,
+                    arrowprops=dict(arrowstyle="->", lw=2.65, color=color, shrinkA=4, shrinkB=3),
+                    bbox=dict(boxstyle="round,pad=0.38", fc="white", ec=color, lw=1.9, alpha=0.985))
 
     if p.grade not in ["C", "D"] and p.side in ["long", "short"]:
         if p.side == "long":
@@ -343,12 +346,15 @@ def plot_opening_chart(p):
 
     ax.set_xlim(-1, n)
     ax.set_ylim(y_min, y_max)
-    ax.set_title(f"{p.no:03d}  {p.name}", fontproperties=base.MPL_FONT_BOLD, fontsize=23, loc="left", color=base.INK, pad=14)
-    ax.set_ylabel("价格 / Price", fontproperties=base.MPL_FONT_BOLD, fontsize=14, color="#35465a")
-    ax.tick_params(axis="both", labelsize=12, colors="#35465a")
+    for spine in ax.spines.values():
+        spine.set_color("#b8c5d8")
+        spine.set_linewidth(1.2)
+    ax.set_title(f"{p.no:03d}  {p.name}", fontproperties=base.MPL_FONT_BOLD, fontsize=27, loc="left", color=base.INK, pad=16)
+    ax.set_ylabel("价格 / Price", fontproperties=base.MPL_FONT_BOLD, fontsize=16, color="#26364d")
+    ax.tick_params(axis="both", labelsize=14, colors="#26364d")
     ax.set_xticks(np.linspace(0, n - 1, 8, dtype=int))
-    ax.set_xlabel("合成开盘K线序列：原创教学示意，不代表任何真实品种", fontproperties=base.MPL_FONT_BOLD, fontsize=12, color="#596579")
-    ax.legend(prop=base.MPL_FONT_BOLD, loc="upper left", frameon=True, facecolor="white", framealpha=0.95)
+    ax.set_xlabel("合成开盘K线序列：原创教学示意，不代表任何真实品种", fontproperties=base.MPL_FONT_BOLD, fontsize=14, color="#3f4f66")
+    ax.legend(prop=base.MPL_FONT_BOLD, loc="upper left", frameon=True, facecolor="white", framealpha=0.98)
     out = CHART_DIR / f"opening_chart_{p.no:03d}.jpg"
     fig.savefig(out, dpi=300, facecolor="white")
     plt.close(fig)

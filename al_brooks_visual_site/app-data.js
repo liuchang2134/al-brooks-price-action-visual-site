@@ -1,7 +1,7 @@
 window.LEARNING_SITE_DATA = {
   "pdfs": {
-    "atlas": "https://github.com/liuchang2134/al-brooks-price-action-visual-site/releases/download/v1.0.0/al-brooks-price-action-atlas.pdf",
-    "opening": "https://github.com/liuchang2134/al-brooks-price-action-visual-site/releases/download/v1.0.0/al-brooks-opening-price-action.pdf"
+    "atlas": "../Al_Brooks价格行为学形态图谱_完整详解高可读版.pdf",
+    "opening": "../Al_Brooks开盘时段价格行为形态专题_完整详解高可读版.pdf"
   },
   "pages": [
     {

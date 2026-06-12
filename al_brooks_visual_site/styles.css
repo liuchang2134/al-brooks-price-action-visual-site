@@ -1319,7 +1319,7 @@ input[type="search"]:focus {
 
 .task-card-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
   gap: 10px;
 }
 
@@ -1374,7 +1374,7 @@ input[type="search"]:focus {
 
 .support-tools {
   display: grid;
-  grid-template-columns: auto repeat(2, minmax(0, 1fr));
+  grid-template-columns: auto repeat(3, minmax(0, 1fr));
   gap: 8px;
   align-items: stretch;
 }
@@ -1629,6 +1629,174 @@ input[type="search"]:focus {
 
 .path-stage button {
   margin-top: 12px;
+}
+
+.theory-map,
+.practice-loop,
+.chart-clinic-summary {
+  padding: 16px;
+}
+
+.theory-map-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr);
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+
+.theory-map-head h3,
+.practice-loop h3,
+.chart-clinic-summary h3 {
+  margin: 4px 0 0;
+  font-size: 24px;
+}
+
+.theory-map-head p:last-child,
+.chart-clinic-summary p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.theory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.theory-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #d8e1ee;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.theory-card-top {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.theory-card-top > span {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #142033;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.theory-card h4 {
+  color: #142033;
+  font-size: 18px;
+}
+
+.theory-card button {
+  width: fit-content;
+  margin-top: auto;
+}
+
+.practice-loop {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.35fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.practice-loop ol {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.practice-loop li {
+  position: relative;
+  min-height: 118px;
+  padding: 14px 14px 14px 40px;
+  border: 1px solid #dce4f0;
+  border-radius: 8px;
+  background: #f8fbff;
+  color: #24334a;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.55;
+}
+
+.practice-loop li::before {
+  content: counter(list-item);
+  position: absolute;
+  top: 14px;
+  left: 12px;
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.chart-clinic-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.chart-layer {
+  padding: 16px;
+}
+
+.chart-layer strong {
+  display: block;
+  margin-top: 8px;
+  color: #142033;
+  font-size: 16px;
+}
+
+.chart-clinic-summary {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.35fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.chart-clinic-summary dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.chart-clinic-summary dl > div {
+  padding: 12px;
+  border: 1px solid #dce4f0;
+  border-radius: 8px;
+  background: #f8fbff;
+}
+
+.chart-clinic-summary dt {
+  color: #142033;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.chart-clinic-summary dd {
+  margin: 6px 0 0;
+  color: #44546a;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .module-toolbar {
@@ -2125,6 +2293,52 @@ input[type="search"]:focus {
   filter: contrast(1.08) saturate(1.04);
 }
 
+body.chart-focus-mode .sidebar,
+body.chart-focus-mode .hero-strip,
+body.chart-focus-mode .study-system,
+body.chart-focus-mode .strategy-board,
+body.chart-focus-mode .library-head,
+body.chart-focus-mode .card-grid {
+  display: none;
+}
+
+body.chart-focus-mode .shell {
+  grid-template-columns: 1fr;
+  width: min(1880px, calc(100% - 24px));
+  margin-top: 12px;
+}
+
+body.chart-focus-mode .workspace {
+  display: grid;
+}
+
+body.chart-focus-mode .reader {
+  border-color: #9fb4d4;
+  box-shadow: 0 18px 58px rgb(20 32 51 / 0.16);
+}
+
+body.chart-focus-mode .reader-head {
+  position: sticky;
+  top: 76px;
+  z-index: 12;
+  background: rgb(255 255 255 / 0.96);
+  backdrop-filter: blur(14px);
+}
+
+body.chart-focus-mode .image-stage {
+  min-height: calc(100dvh - 170px);
+  padding: 18px;
+}
+
+body.chart-focus-mode .image-stage img {
+  max-height: none;
+  width: min(100%, 1760px);
+}
+
+body.chart-focus-mode .reader-text-page {
+  width: min(1420px, 100%);
+}
+
 @media (max-width: 980px) {
   .front-reader-grid {
     grid-template-columns: 1fr;
@@ -2155,6 +2369,11 @@ input[type="search"]:focus {
   }
 
   .path-map,
+  .theory-grid,
+  .practice-loop,
+  .practice-loop ol,
+  .chart-clinic-grid,
+  .chart-clinic-summary,
   .task-card-grid,
   .no-trade-grid,
   .compare-grid,
@@ -2166,6 +2385,14 @@ input[type="search"]:focus {
 
   .task-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .support-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .theory-map-head {
+    grid-template-columns: 1fr;
   }
 
   .current-page-actions {

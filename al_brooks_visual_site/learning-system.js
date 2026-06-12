@@ -52,6 +52,14 @@
       cta: "开始基础学习",
     },
     {
+      id: "theory",
+      label: "搭建理论框架",
+      eyebrow: "先有地图",
+      description: "市场周期、Always In、突破、回调、反转、区间和管理。",
+      outcome: "适合把 198 页资料串成一套判断系统。",
+      cta: "打开理论地图",
+    },
+    {
       id: "bar",
       label: "练一组逐K判断",
       eyebrow: "看一根，判断一次",
@@ -90,6 +98,11 @@
       id: "glossary",
       label: "术语速查",
       description: "Signal Bar、H2、MTR、Measured Move 等中英对照。",
+    },
+    {
+      id: "chartClinic",
+      label: "图表读法",
+      description: "用六层检查法阅读当前K线图，避免只盯箭头。",
     },
     {
       id: "compare",
@@ -258,6 +271,62 @@
       meaning: "当背景混乱、区间中部、无跟随或目标空间不足时主动不交易。",
       mistake: "把不交易看成错过机会，实际它是过滤能力的一部分。",
     },
+    {
+      term: "Always In",
+      cn: "当前主导方向",
+      diagram: "micro",
+      meaning: "用连续收盘、突破接受度和回调深浅判断市场当前更偏多还是偏空。",
+      mistake: "把 Always In 当成必须持仓，而不是判断主导力量的框架。",
+    },
+    {
+      term: "Second Entry",
+      cn: "二次入场",
+      diagram: "h2",
+      meaning: "第一次尝试失败后，第二次触发更能说明对手方力量不足。",
+      mistake: "在没有趋势背景或结构边缘时，机械认为第二次一定更好。",
+    },
+    {
+      term: "Failed Breakout",
+      cn: "失败突破",
+      diagram: "weakBreakout",
+      meaning: "突破边界后没有跟随并快速回到区间内，才进入失败突破观察。",
+      mistake: "突破刚发生就预测失败，而不是等无跟随和反向触发。",
+    },
+    {
+      term: "Trend Channel Line",
+      cn: "趋势通道线",
+      diagram: "breakoutTest",
+      meaning: "通道线帮助判断趋势是否加速、过冲、衰竭或进入转换。",
+      mistake: "看到碰到通道线就立刻反转，忽略是否有确认K线。",
+    },
+    {
+      term: "Opening Reversal",
+      cn: "开盘反转",
+      diagram: "openingConfirm",
+      meaning: "开盘测试关键价位失败后，出现强反向信号和跟随。",
+      mistake: "把开盘第一根反向K线当确认，忽略关键位和跟随。",
+    },
+    {
+      term: "Gap Fill",
+      cn: "缺口回补",
+      diagram: "openingFake",
+      meaning: "缺口方向没有被接受时，价格可能回到前日收盘或缺口区域。",
+      mistake: "看到缺口就盲目追方向，没看开盘后是否接受缺口。",
+    },
+    {
+      term: "Climax",
+      cn: "高潮",
+      diagram: "counterTrend",
+      meaning: "连续加速K线或远离均线后，市场可能从趋势进入回调或转换。",
+      mistake: "高潮后没有确认就直接反向交易。",
+    },
+    {
+      term: "Trader's Equation",
+      cn: "交易方程",
+      diagram: "badRisk",
+      meaning: "综合条件概率、风险、目标和仓位，而不是只看胜率。",
+      mistake: "形态看起来好，但目标空间小于风险仍然交易。",
+    },
   ];
 
   const noTradeSetups = [
@@ -333,6 +402,128 @@
       bad: { label: "突破尝试", diagram: "openingFake", points: ["只有一根大K线", "影线长", "无跟随", "很快回到开盘区间"] },
       links: ["opening-041", "opening-067"],
     },
+  ];
+
+  const theoryPillars = [
+    {
+      id: "cycle",
+      title: "市场周期先于形态",
+      diagram: "breakoutMode",
+      link: "atlas-front",
+      principle: "先判断趋势、交易区间、突破模式、高潮或转换阶段，再给形态定级。",
+      practice: "每张图先写一句：现在更像趋势、区间还是突破模式。",
+      warning: "同一个 H2 在强趋势里可能是顺势机会，在区间中部可能只是噪音。",
+    },
+    {
+      id: "always-in",
+      title: "Always In 与主导方向",
+      diagram: "micro",
+      link: "atlas-a-plus",
+      principle: "用连续收盘、回调深浅、突破接受度判断市场当前更偏多还是偏空。",
+      practice: "只在主导方向清楚时提高优先级，逆势第一反转默认降级。",
+      warning: "不要把单根大K线当成全天方向，后续跟随才是接受度。",
+    },
+    {
+      id: "signal-trigger",
+      title: "信号棒与触发价分开",
+      diagram: "triggerBull",
+      link: "atlas-front",
+      principle: "信号棒只是准备条件，突破信号棒高点或低点才是触发条件。",
+      practice: "多头写出信号棒高点上方触发价，空头写出低点下方触发价。",
+      warning: "把信号棒收盘价当入场，是最危险的学习误差。",
+    },
+    {
+      id: "pullback-second",
+      title: "二次入场优于第一次逆势尝试",
+      diagram: "h2",
+      link: "atlas-072",
+      principle: "第一次反转常只是试探，二次信号更能说明对手方失败。",
+      practice: "回调里观察 H1/H2、L1/L2、测试失败和跟随K线。",
+      warning: "强趋势里第一根逆势信号通常不值得高估。",
+    },
+    {
+      id: "mtr",
+      title: "主要趋势反转需要过程",
+      diagram: "mtr",
+      link: "atlas-021",
+      principle: "MTR 通常需要趋势线突破、测试极端点失败、强反向信号和跟随。",
+      practice: "先找原趋势削弱，再找测试失败，最后才看触发。",
+      warning: "只看到顶部或底部大影线就反转，容易变成摸顶抄底。",
+    },
+    {
+      id: "range",
+      title: "交易区间中部默认过滤",
+      diagram: "noTrade",
+      link: "atlas-081",
+      principle: "区间中部目标空间小、方向随机性高，最适合训练等待。",
+      practice: "把区间高低点、中轴和失败突破先画出来。",
+      warning: "区间中部追突破，是新手最常见的过度交易来源。",
+    },
+    {
+      id: "opening",
+      title: "开盘先观察再确认",
+      diagram: "openingRange",
+      link: "morning-trend",
+      principle: "前 5 分钟只观察，18-20 根K线后开盘区间更有结构意义。",
+      practice: "突破必须写明是尝试还是确认，确认要看强收盘和跟随。",
+      warning: "看到缺口就追，常忽略缺口是否被市场接受。",
+    },
+    {
+      id: "risk",
+      title: "结构止损决定交易是否值得",
+      diagram: "badRisk",
+      link: "atlas-098",
+      principle: "止损必须放在结构之外，目标必须来自前高前低、区间边缘或测量目标。",
+      practice: "先算止损距离和第一目标空间，再决定是否继续看入场。",
+      warning: "目标空间小于风险时，形态再像也应降级或放弃。",
+    },
+  ];
+
+  const chartReadLayers = [
+    {
+      title: "1. 背景",
+      question: "市场周期是什么？",
+      check: "趋势、区间、突破模式、高潮、转换阶段。",
+      fail: "说不清背景时，不要直接谈形态。",
+    },
+    {
+      title: "2. 位置",
+      question: "价格在哪里？",
+      check: "前高前低、EMA、开盘价、区间边缘、突破点、通道线。",
+      fail: "区间中部和目标空间不足默认降级。",
+    },
+    {
+      title: "3. 力度",
+      question: "谁在控制？",
+      check: "强收盘、连续跟随、回调深浅、影线和重叠程度。",
+      fail: "只有单根大K线，不能当作确认。",
+    },
+    {
+      title: "4. 信号",
+      question: "信号棒是否合格？",
+      check: "方向、收盘位置、实体大小、是否在结构位出现。",
+      fail: "Doji、长影线但收盘差、重叠严重要过滤。",
+    },
+    {
+      title: "5. 触发",
+      question: "是否真的成交？",
+      check: "多头突破信号棒高点，空头跌破信号棒低点。",
+      fail: "未突破信号棒边界，不算入场。",
+    },
+    {
+      title: "6. 交易管理",
+      question: "止损和目标是否成立？",
+      check: "结构止损、第一目标区、减仓或退出条件。",
+      fail: "止损过远或目标太近时，不交易比交易更专业。",
+    },
+  ];
+
+  const practiceLoops = [
+    "读图前先写市场周期，不写形态名称。",
+    "圈出信号棒，再画触发价，不在信号棒内部标入场。",
+    "找第一目标区，而不是机械写固定 2R。",
+    "给每张图至少写一个放弃条件。",
+    "复盘时把错误归类为背景错、位置错、触发错或风险错。",
   ];
 
   const barScenarios = [
@@ -582,7 +773,9 @@
     const renderers = {
       starter: renderStarter,
       path: renderStarter,
+      theory: renderTheory,
       glossary: renderGlossary,
+      chartClinic: renderChartClinic,
       bar: renderBarTraining,
       noTrade: renderNoTrade,
       openingTree: renderOpeningTree,
@@ -667,6 +860,7 @@
           </ol>
         </div>
         <div class="guided-actions">
+          <button type="button" data-action="open-module" data-module="theory">打开理论地图</button>
           <button type="button" data-action="open-module" data-module="glossary">先看术语速查</button>
           <button type="button" data-action="go-section" data-section="start-here">打开规则说明页</button>
         </div>
@@ -698,6 +892,110 @@
         )
         .join("")}
       </div>
+    </div>`;
+  }
+
+  function renderTheory() {
+    return `<div class="module-stack">
+      <section class="study-card guided-intro theory-intro">
+        <div>
+          <p class="panel-label">理论地图</p>
+          <h3>把 198 页资料串成一套判断系统，而不是背 198 个名字。</h3>
+          <ol>
+            <li>先用市场周期决定形态优先级。</li>
+            <li>再用信号棒、触发价和跟随确认是否真的成交。</li>
+            <li>最后用结构止损和第一目标区决定值不值得做。</li>
+          </ol>
+        </div>
+        <div class="guided-actions">
+          <button type="button" data-action="open-module" data-module="chartClinic">看六层读图法</button>
+          <button type="button" data-action="open-module" data-module="review">生成复盘模板</button>
+        </div>
+      </section>
+      <section class="study-card theory-map">
+        <div class="theory-map-head">
+          <div>
+            <p class="panel-label">Core Brooks Framework</p>
+            <h3>先判背景，再等触发，再管理风险。</h3>
+          </div>
+          <p>下面每一格都是一个学习支点。点进去看对应资料页，再回到这里做复盘。</p>
+        </div>
+        <div class="theory-grid">
+          ${theoryPillars
+            .map(
+              (pillar, index) => `<article class="theory-card">
+                <div class="theory-card-top">
+                  <span>${String(index + 1).padStart(2, "0")}</span>
+                  <div class="mini-chart">${renderMiniSvg(pillar.diagram, { label: pillar.title })}</div>
+                </div>
+                <h4>${escapeHtml(pillar.title)}</h4>
+                <p><strong>核心：</strong>${escapeHtml(pillar.principle)}</p>
+                <p><strong>练法：</strong>${escapeHtml(pillar.practice)}</p>
+                <div class="misread"><strong>容易误用</strong>${escapeHtml(pillar.warning)}</div>
+                <button type="button" data-action="${pillar.link.startsWith("atlas") || pillar.link.startsWith("opening") ? "go-page" : "go-section"}" ${
+                pillar.link.startsWith("atlas") || pillar.link.startsWith("opening") ? `data-page="${pillar.link}"` : `data-section="${pillar.link}"`
+              }>打开对应内容</button>
+              </article>`
+            )
+            .join("")}
+        </div>
+      </section>
+      <section class="study-card practice-loop">
+        <div>
+          <p class="panel-label">每天 20 分钟训练循环</p>
+          <h3>不用一次看完，按这个循环推进。</h3>
+        </div>
+        <ol>${practiceLoops.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
+      </section>
+    </div>`;
+  }
+
+  function renderChartClinic() {
+    const page = runtime.currentPage;
+    const title = page ? shortTitle(page.title) : "先选择一张形态图";
+    return `<div class="module-stack">
+      <section class="study-card guided-intro">
+        <div>
+          <p class="panel-label">图表读法</p>
+          <h3>当前页：${escapeHtml(title)}</h3>
+          <ol>
+            <li>不要先看箭头，先读背景和位置。</li>
+            <li>把触发价、结构止损和第一目标区分开。</li>
+            <li>任何一层说不清，就把形态降级或进入 No Trade。</li>
+          </ol>
+        </div>
+        <div class="guided-actions">
+          ${page ? `<button type="button" data-action="go-page" data-page="${page.id}">回到当前图</button>` : ""}
+          <button type="button" data-action="open-module" data-module="noTrade">看 No Trade</button>
+        </div>
+      </section>
+      <div class="chart-clinic-grid">
+        ${chartReadLayers
+          .map(
+            (layer) => `<article class="study-card chart-layer">
+              <h3>${escapeHtml(layer.title)}</h3>
+              <strong>${escapeHtml(layer.question)}</strong>
+              <p>${escapeHtml(layer.check)}</p>
+              <div class="check-warning"><strong>降级条件</strong>${escapeHtml(layer.fail)}</div>
+            </article>`
+          )
+          .join("")}
+      </div>
+      <section class="study-card chart-clinic-summary">
+        <div>
+          <p class="panel-label">当前页快速判读</p>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(page?.summary || "从页面库选择一个形态后，这里会自动带入当前图。")}</p>
+        </div>
+        ${
+          page?.details
+            ? `<dl>${Object.entries(page.details)
+                .slice(0, 4)
+                .map(([key, value]) => `<div><dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd></div>`)
+                .join("")}</dl>`
+            : ""
+        }
+      </section>
     </div>`;
   }
 

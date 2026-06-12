@@ -58,10 +58,10 @@ MPL_FONT_BOLD = FontProperties(fname=str(FONT_BOLD))
 
 INK = "#17212b"
 MUTED = "#667085"
-GRID = "#eef2f7"
-BLUE = "#145fd7"
-RED = "#b42318"
-GREEN = "#087443"
+GRID = "#dbe5f2"
+BLUE = "#0b5bd3"
+RED = "#c0261d"
+GREEN = "#078052"
 AMBER = "#8a5a00"
 PURPLE = "#5b45c7"
 PAPER = "#ffffff"
@@ -427,22 +427,22 @@ def plot_chart(pattern: Pattern):
     x = np.arange(n)
     fig = plt.figure(figsize=(19.0, 7.27), dpi=300)
     ax = fig.add_axes([0.055, 0.115, 0.90, 0.78])
-    ax.set_facecolor("#ffffff")
+    ax.set_facecolor("#fbfdff")
     fig.patch.set_facecolor("#ffffff")
-    ax.grid(True, color=GRID, linewidth=0.75, alpha=0.95)
+    ax.grid(True, color=GRID, linewidth=1.05, alpha=0.92)
     ax.set_axisbelow(True)
 
-    width = 0.66
+    width = 0.72
     for i in range(n):
         color = GREEN if c[i] >= o[i] else RED
-        ax.vlines(x[i], l[i], h[i], color=color, linewidth=1.85, alpha=0.98)
+        ax.vlines(x[i], l[i], h[i], color=color, linewidth=2.25, alpha=0.98)
         bottom = min(o[i], c[i])
         height = abs(c[i] - o[i])
         if height < 0.05:
-            ax.hlines(c[i], x[i] - width / 2, x[i] + width / 2, color=color, linewidth=2.8)
+            ax.hlines(c[i], x[i] - width / 2, x[i] + width / 2, color=color, linewidth=3.4)
         else:
             ax.add_patch(
-                plt.Rectangle((x[i] - width / 2, bottom), width, height, facecolor=color, edgecolor=color, linewidth=1.15)
+                plt.Rectangle((x[i] - width / 2, bottom), width, height, facecolor=color, edgecolor=color, linewidth=1.35)
             )
 
     e = ema(c)
@@ -451,6 +451,9 @@ def plot_chart(pattern: Pattern):
     side = pattern.side
     grade = pattern.grade
     y_min, y_max = float(min(l) - 2.0 * atr), float(max(h) + 2.25 * atr)
+    vol_height = (h - l) / max(float(np.max(h - l)), 1e-6) * (y_max - y_min) * 0.105
+    ax.bar(x, vol_height, bottom=y_min, width=0.72, color=["#078052" if c[i] >= o[i] else "#c0261d" for i in range(n)], alpha=0.16, linewidth=0, zorder=0)
+    ax.axhline(c[-1], color="#334155", linestyle=(0, (2, 5)), linewidth=1.45, alpha=0.55)
 
     def label(text, xy, xytext, color=BLUE, ha="left"):
         ax.annotate(
@@ -458,12 +461,12 @@ def plot_chart(pattern: Pattern):
             xy=xy,
             xytext=xytext,
             textcoords="data",
-            fontsize=13.0,
+            fontsize=15.0,
             fontproperties=MPL_FONT_BOLD,
             color=color,
             ha=ha,
-            arrowprops=dict(arrowstyle="->", lw=2.15, color=color, shrinkA=4, shrinkB=3),
-            bbox=dict(boxstyle="round,pad=0.34", fc="white", ec=color, lw=1.55, alpha=0.96),
+            arrowprops=dict(arrowstyle="->", lw=2.65, color=color, shrinkA=4, shrinkB=3),
+            bbox=dict(boxstyle="round,pad=0.38", fc="white", ec=color, lw=1.9, alpha=0.985),
         )
 
     if grade not in ["C", "D"] and side in ["long", "short"]:
@@ -519,12 +522,15 @@ def plot_chart(pattern: Pattern):
 
     ax.set_xlim(-1, n)
     ax.set_ylim(y_min, y_max)
-    ax.set_title(f"{pattern.no:03d}  {pattern.name}", fontproperties=MPL_FONT_BOLD, fontsize=23, loc="left", color=INK, pad=14)
-    ax.set_ylabel("价格 / Price", fontproperties=MPL_FONT_BOLD, fontsize=14, color="#35465a")
-    ax.tick_params(axis="both", labelsize=12, colors="#35465a")
+    for spine in ax.spines.values():
+        spine.set_color("#b8c5d8")
+        spine.set_linewidth(1.2)
+    ax.set_title(f"{pattern.no:03d}  {pattern.name}", fontproperties=MPL_FONT_BOLD, fontsize=27, loc="left", color=INK, pad=16)
+    ax.set_ylabel("价格 / Price", fontproperties=MPL_FONT_BOLD, fontsize=16, color="#26364d")
+    ax.tick_params(axis="both", labelsize=14, colors="#26364d")
     ax.set_xticks(np.linspace(0, n - 1, 8, dtype=int))
-    ax.set_xlabel("合成K线序列：原创教学示意，不代表任何真实品种", fontproperties=MPL_FONT_BOLD, fontsize=12, color="#596579")
-    ax.legend(prop=MPL_FONT_BOLD, loc="upper left", frameon=True, facecolor="white", framealpha=0.95, fontsize=12)
+    ax.set_xlabel("合成K线序列：原创教学示意，不代表任何真实品种", fontproperties=MPL_FONT_BOLD, fontsize=14, color="#3f4f66")
+    ax.legend(prop=MPL_FONT_BOLD, loc="upper left", frameon=True, facecolor="white", framealpha=0.98, fontsize=13)
     out = CHART_DIR / f"chart_{pattern.no:03d}.jpg"
     fig.savefig(out, dpi=300, facecolor="white")
     plt.close(fig)
