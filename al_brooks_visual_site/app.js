@@ -199,6 +199,7 @@
     readerMeta: document.getElementById("readerMeta"),
     readerTitle: document.getElementById("readerTitle"),
     readerImage: document.getElementById("readerImage"),
+    readerTextPage: document.getElementById("readerTextPage"),
     readerNotes: document.getElementById("readerNotes"),
     openImageBtn: document.getElementById("openImageBtn"),
     openPageBtn: document.getElementById("openPageBtn"),
@@ -695,12 +696,7 @@
     ].filter(Boolean);
     els.readerMeta.textContent = metaParts.join(" / ");
     els.readerTitle.textContent = item.title;
-    els.readerImage.src = item.full;
-    els.readerImage.alt = item.title;
-    els.openImageBtn.href = item.full;
-    els.openImageBtn.textContent = item.kind === "pattern" ? "打开高清K线" : "打开整页图";
-    els.openPageBtn.href = item.pageImage || item.full;
-    els.openPageBtn.style.display = item.kind === "pattern" ? "" : "none";
+    renderReaderVisual(item);
 
     const noteEntries = item.details
       ? Object.entries(item.details)
@@ -742,6 +738,217 @@
     return item.courseLabel;
   }
 
+  function renderReaderVisual(item) {
+    if (item.kind === "front") {
+      els.readerImage.hidden = true;
+      els.readerImage.removeAttribute("src");
+      els.readerTextPage.hidden = false;
+      els.readerTextPage.innerHTML = renderFrontReader(item);
+      els.openImageBtn.href = item.full;
+      els.openImageBtn.textContent = "打开原始页图";
+      els.openPageBtn.href = item.full;
+      els.openPageBtn.style.display = "none";
+      return;
+    }
+
+    els.readerTextPage.hidden = true;
+    els.readerTextPage.innerHTML = "";
+    els.readerImage.hidden = false;
+    els.readerImage.src = item.full;
+    els.readerImage.alt = item.title;
+    els.openImageBtn.href = item.full;
+    els.openImageBtn.textContent = "打开高清K线";
+    els.openPageBtn.href = item.pageImage || item.full;
+    els.openPageBtn.style.display = "";
+  }
+
+  function renderFrontReader(item) {
+    const content = frontReaderContent(item);
+    return `<article class="front-reader">
+      <div class="front-reader-hero">
+        <span>${escapeHtml(content.eyebrow)}</span>
+        <h4>${escapeHtml(content.title || shortReadableTitle(item.title))}</h4>
+        <p>${escapeHtml(content.lead)}</p>
+      </div>
+      <div class="front-reader-grid">
+        ${content.cards
+          .map(
+            (card) => `<section class="front-reader-card">
+              <span>${escapeHtml(card.label)}</span>
+              <strong>${escapeHtml(card.title)}</strong>
+              <p>${escapeHtml(card.body)}</p>
+              <ul>${card.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul>
+            </section>`
+          )
+          .join("")}
+      </div>
+      <p class="front-reader-reminder">${escapeHtml(content.reminder)}</p>
+    </article>`;
+  }
+
+  function frontReaderContent(item) {
+    const commonReminder = "教学用途：条件胜率不是固定胜率，必须结合市场周期、趋势强度、K线背景、触发、止损、目标和风险收益比。";
+    const contentById = {
+      "atlas-front-001": {
+        eyebrow: "形态图谱 / 封面",
+        title: "按条件胜率与实战优先级排序",
+        lead: "这份图谱的核心不是背形态，而是先判断背景，再等待触发。顺强趋势、强突破后回踩和有跟随的信号优先。",
+        cards: [
+          { label: "阅读顺序", title: "先背景，再形态", body: "形态只在正确市场周期里有教学意义。", points: ["先看趋势或区间", "再看信号棒质量", "最后看目标空间"] },
+          { label: "概率表述", title: "只讲条件概率", body: "任何形态都不能脱离背景谈固定胜率。", points: ["条件胜率", "实战优先级", "背景过滤"] },
+          { label: "图表来源", title: "原创合成K线", body: "所有图是教学示意，不复制第三方图表。", points: ["保留重叠和假突破", "不画完美模式", "不作为交易建议"] },
+        ],
+        reminder: commonReminder,
+      },
+      "atlas-front-002": {
+        eyebrow: "形态图谱 / 使用方法",
+        title: "如何阅读本图谱",
+        lead: "每一页都按识别条件、入场逻辑、止损与目标、放弃条件来读。重点是等待成交触发，而不是看到形态就进。",
+        cards: [
+          { label: "Signal Bar", title: "信号棒必须先完成", body: "多头看信号棒高点，空头看信号棒低点。", points: ["收盘前不提前判定", "弱信号棒要过滤", "Doji 不宜硬做"] },
+          { label: "Entry Trigger", title: "突破触发才算入场", body: "多头必须突破信号棒高点，空头必须跌破信号棒低点。", points: ["未突破不成交", "触发价不是收盘价", "不要把箭头画在棒内"] },
+          { label: "Exit Logic", title: "先定义结构止损", body: "止损放在结构之外，目标看前高前低、区间边缘、EMA 或测量目标。", points: ["结构止损", "第一目标区", "目标空间要够"] },
+        ],
+        reminder: "读图时先问：现在是趋势、区间还是突破模式？再问：这个信号有没有真正触发？",
+      },
+      "atlas-front-003": {
+        eyebrow: "形态图谱 / 图例",
+        title: "图例说明",
+        lead: "图例的目的是把触发、止损、目标和过滤区分清楚。箭头只表示可能的触发边界，不表示保证成交或保证到达目标。",
+        cards: [
+          { label: "触发线", title: "Entry Trigger / 入场触发价", body: "虚线表示等待突破的价格。", points: ["多头在高点上方", "空头在低点下方", "未突破就是等待"] },
+          { label: "风险线", title: "结构止损", body: "止损必须依附结构，而不是固定比例。", points: ["信号棒低点/高点", "摆动点之外", "失败突破点之外"] },
+          { label: "过滤区", title: "No Trade / 等待", body: "低质量背景不强行标入场。", points: ["区间中部", "无跟随突破", "目标空间不足"] },
+        ],
+        reminder: "最常见误用：把图例箭头当成即时买卖点，而不是等待触发价。",
+      },
+      "atlas-front-004": {
+        eyebrow: "形态图谱 / 等级",
+        title: "胜率等级说明",
+        lead: "A+ 到 D 表示实战优先级和条件概率，不表示固定胜率。等级越高，对背景和跟随确认的要求越明确。",
+        cards: [
+          { label: "A+ / A", title: "优先学习", body: "强趋势、强突破、清晰回踩、有跟随。", points: ["顺势优先", "连续K线确认", "回踩不深"] },
+          { label: "B / C", title: "必须过滤", body: "可交易或可观察，但对位置和目标空间更敏感。", points: ["看区间边缘", "避免中部追单", "降低预期"] },
+          { label: "D", title: "主要用于避坑", body: "训练不交易比强行交易更重要。", points: ["弱信号棒", "无跟随", "逆强趋势第一反转"] },
+        ],
+        reminder: commonReminder,
+      },
+      "atlas-front-005": {
+        eyebrow: "形态图谱 / 市场周期",
+        title: "市场周期说明",
+        lead: "同一个形态在趋势、交易区间、突破模式里的含义完全不同。先判断周期，再决定要顺势、低买高卖，还是等待。",
+        cards: [
+          { label: "Trend", title: "趋势环境", body: "优先顺势，回调和突破点测试更有价值。", points: ["小回调趋势", "紧密通道", "EMA 支撑/压力"] },
+          { label: "Range", title: "交易区间", body: "区间中部信号质量差，边缘才有结构。", points: ["低买高卖", "中部过滤", "假突破常见"] },
+          { label: "Transition", title: "转换阶段", body: "突破模式和高潮后要等确认。", points: ["强收盘", "跟随K线", "二次信号"] },
+        ],
+        reminder: "新手最容易把区间中部当趋势开始，或把强趋势里的第一根逆势棒当反转。",
+      },
+      "atlas-front-006": {
+        eyebrow: "形态图谱 / 入场规则",
+        title: "入场标注规则",
+        lead: "所有入场都必须等信号棒完成后触发。提前在信号棒内部、收盘价或主观猜测位置标入场，都会误导学习。",
+        cards: [
+          { label: "多头", title: "高点上方触发", body: "下一根或后续K线突破信号棒高点才算触发。", points: ["不在棒内买", "不在收盘价买", "未突破不成交"] },
+          { label: "空头", title: "低点下方触发", body: "下一根或后续K线跌破信号棒低点才算触发。", points: ["不提前卖", "不追无确认突破", "弱信号过滤"] },
+          { label: "开盘", title: "突破要有确认", body: "开盘突破尤其需要强收盘和跟随K线。", points: ["突破尝试", "突破确认", "失败突破快速回区间"] },
+        ],
+        reminder: "最重要的一句：没有突破信号棒高点或低点，就没有成交。",
+      },
+      "atlas-front-007": {
+        eyebrow: "形态图谱 / 风险",
+        title: "风险与误用提醒",
+        lead: "本网站是交易教育资料，不提供真实投资建议。价格行为训练的重点是识别条件、过滤低质量机会和控制风险。",
+        cards: [
+          { label: "风险", title: "先算止损和目标", body: "如果止损过远或目标空间不足，形态再像也不值得做。", points: ["结构止损", "第一目标区", "风险收益比"] },
+          { label: "误用", title: "不要只看单根K线", body: "单根大阳线或大阴线不能代表趋势必然延续。", points: ["看跟随", "看位置", "看市场周期"] },
+          { label: "纪律", title: "No Trade 是训练重点", body: "很多场景最好的决策是等待。", points: ["区间中部", "新闻前后", "混乱重叠"] },
+        ],
+        reminder: commonReminder,
+      },
+      "opening-front-001": {
+        eyebrow: "开盘专题 / 封面",
+        title: "开盘前 60-90 分钟核心形态",
+        lead: "开盘波动大、假突破多，先观察方向性和跟随，再决定是趋势从开盘、开盘区间，还是反转失败。",
+        cards: [
+          { label: "前5分钟", title: "先观察", body: "不要把第一根大K线当成确定趋势。", points: ["看缺口接受", "看实体与影线", "不急着追"] },
+          { label: "前15分钟", title: "初步分类", body: "判断趋势从开盘还是交易区间开盘。", points: ["连续收高/低", "回调深浅", "是否重叠"] },
+          { label: "60-90分钟", title: "等待结构", body: "用开盘区间、EMA、前日价位和跟随确认。", points: ["强收盘", "跟随K线", "失败突破"] },
+        ],
+        reminder: "开盘专题尤其强调：兴奋不是信号，确认才是信号。",
+      },
+      "opening-front-002": {
+        eyebrow: "开盘专题 / 框架",
+        title: "开盘时段框架",
+        lead: "开盘不是一个瞬间，而是一段信息逐步清晰的过程。越早的信号越需要谨慎，越靠近结构边界越有参考价值。",
+        cards: [
+          { label: "5分钟", title: "波动和噪音最大", body: "主要观察缺口方向、第一组K线强弱和是否有跟随。", points: ["不预测", "不乱入", "看收盘位置"] },
+          { label: "15-30分钟", title: "方向开始显形", body: "趋势从开盘通常回调浅，区间开盘通常重叠多。", points: ["趋势强度", "回踩质量", "是否围绕开盘价"] },
+          { label: "60-90分钟", title: "结构更可靠", body: "开盘区间、前日高低点、VWAP/EMA 和测量目标更有意义。", points: ["边缘交易", "突破确认", "失败突破反向"] },
+        ],
+        reminder: "不要把时间越早误以为机会越好；开盘越乱，越要等。",
+      },
+      "opening-front-003": {
+        eyebrow: "开盘专题 / 18-20根K线",
+        title: "18-20 根K线开盘区间说明",
+        lead: "开盘后约 18-20 根K线可能形成可观察区间。突破这个区间后，方向判断通常比第一根K线可靠。",
+        cards: [
+          { label: "观察区", title: "先画区间高低点", body: "用浅色区域标出开盘观察区，不急着判断方向。", points: ["Opening Range High", "Opening Range Low", "中轴过滤"] },
+          { label: "突破", title: "区分尝试和确认", body: "强收盘加跟随K线才更接近确认突破。", points: ["突破尝试", "强收盘", "跟随K线"] },
+          { label: "失败", title: "快速回区间要小心", body: "无跟随、重回区间，常变成反向机会或 No Trade。", points: ["假突破", "反向触发", "目标空间"] },
+        ],
+        reminder: "18-20 根K线不是机械规则，而是帮助你等市场给出更多信息。",
+      },
+      "opening-front-004": {
+        eyebrow: "开盘专题 / 图例",
+        title: "图例页",
+        lead: "开盘图必须标出开盘价、前日收盘价、缺口、开盘区间高低点和突破确认。缺口方向本身不是交易理由。",
+        cards: [
+          { label: "Open", title: "开盘价与缺口", body: "涉及缺口时同时标出前日收盘价。", points: ["Open / 开盘价", "Prior Close", "Gap 方向"] },
+          { label: "Range", title: "开盘区间", body: "区间高低点是早盘最重要的参考边界。", points: ["OR High", "OR Low", "中轴少交易"] },
+          { label: "Breakout", title: "突破确认", body: "突破必须看强收盘和跟随，不把第一根突破尝试当结论。", points: ["触发线", "跟随K线", "失败突破"] },
+        ],
+        reminder: "开盘看到缺口就追，是最常见的误判之一。",
+      },
+      "opening-front-005": {
+        eyebrow: "开盘专题 / 入场",
+        title: "入场标注规则",
+        lead: "开盘入场仍然遵守信号棒和触发价规则，只是过滤更严格。突破类必须区分突破尝试和突破确认。",
+        cards: [
+          { label: "多头", title: "信号棒高点上方", body: "等待下一根或后续K线突破信号棒高点。", points: ["不提前", "要跟随", "看回踩低点"] },
+          { label: "空头", title: "信号棒低点下方", body: "等待下一根或后续K线跌破信号棒低点。", points: ["不猜顶部", "要确认", "看反弹高点"] },
+          { label: "过滤", title: "开盘更要等待", body: "重叠太多、无跟随、目标不足时不交易。", points: ["No Trade", "等待二次信号", "避免中部突破"] },
+        ],
+        reminder: "开盘第一根K线结束，不等于趋势已经确定。",
+      },
+      "opening-front-006": {
+        eyebrow: "开盘专题 / 风险",
+        title: "风险提醒",
+        lead: "开盘时段波动更大，止损更宽，假突破更多。学习重点是确认和过滤，而不是提高下单频率。",
+        cards: [
+          { label: "波动", title: "止损可能更宽", body: "如果结构止损过远，就降低仓位或放弃。", points: ["开盘回踩高低点", "区间另一侧", "失败突破点之外"] },
+          { label: "假突破", title: "无跟随就警惕", body: "突破后立刻回到区间内，不要继续按突破思路硬做。", points: ["强收盘", "跟随K线", "快速回区间"] },
+          { label: "纪律", title: "慢一点反而更清楚", body: "前 5 分钟更多是观察，不是证明自己反应快。", points: ["等结构", "等确认", "等目标空间"] },
+        ],
+        reminder: "开盘交易最容易输在提前入场，而不是看不懂形态。",
+      },
+    };
+
+    return (
+      contentById[item.id] || {
+        eyebrow: `${displayCourseLabel(item)} / 说明页`,
+        title: shortReadableTitle(item.title),
+        lead: item.summary || "先理解规则、图例和风险，再进入形态学习。",
+        cards: [
+          { label: "先学", title: "规则与背景", body: "先判断市场周期和趋势强度。", points: ["趋势", "交易区间", "突破模式"] },
+          { label: "再看", title: "触发与结构", body: "确认信号棒和入场触发价。", points: ["信号棒", "触发价", "结构止损"] },
+          { label: "最后", title: "过滤与复盘", body: "目标空间不足或无跟随时放弃。", points: ["No Trade", "第一目标区", "常见误判"] },
+        ],
+        reminder: commonReminder,
+      }
+    );
+  }
+
   function moveSelection(delta) {
     const pages = filteredPages();
     if (!pages.length) return;
@@ -755,6 +962,9 @@
     els.readerMeta.textContent = "没有匹配页面";
     els.readerTitle.textContent = "请调整筛选条件";
     els.readerImage.removeAttribute("src");
+    els.readerImage.hidden = false;
+    els.readerTextPage.hidden = true;
+    els.readerTextPage.innerHTML = "";
     els.openImageBtn.href = "#";
     els.openPageBtn.href = "#";
     els.readerNotes.innerHTML = "";
