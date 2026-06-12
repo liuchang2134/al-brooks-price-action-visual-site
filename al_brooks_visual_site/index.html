@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Al Brooks 价格行为可视化学习站</title>
+    <meta
+      name="description"
+      content="两份中文价格行为教学资料的可视化网站，包含形态图谱、开盘专题、条件胜率等级筛选与大图阅读器。"
+    />
+    <link rel="stylesheet" href="./styles.css?v=clear4" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="eyebrow">Price Action Visual Atlas</p>
+          <h1>Al Brooks 价格行为可视化学习站</h1>
+        </div>
+      </div>
+      <nav class="top-actions" aria-label="PDF 下载">
+        <a id="atlasPdf" class="text-link" href="#" target="_blank" rel="noreferrer">形态图谱 PDF</a>
+        <a id="openingPdf" class="text-link" href="#" target="_blank" rel="noreferrer">开盘专题 PDF</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <aside class="sidebar" aria-label="筛选与专题">
+        <section class="intro-panel">
+          <p class="panel-label">学习范围</p>
+          <strong>198 页可视化资料</strong>
+          <span>112 个完整形态页 + 73 个开盘形态页，另含使用说明、图例和风险提醒。</span>
+        </section>
+
+        <section class="control-group" aria-label="专题筛选">
+          <p class="panel-label">专题</p>
+          <div class="segmented" id="courseFilters">
+            <button type="button" class="active" data-course="all">全部</button>
+            <button type="button" data-course="atlas">形态图谱</button>
+            <button type="button" data-course="opening">开盘专题</button>
+          </div>
+        </section>
+
+        <section class="control-group" aria-label="等级筛选">
+          <p class="panel-label">条件胜率 / 实战优先级</p>
+          <div class="grade-list" id="gradeFilters"></div>
+        </section>
+
+        <section class="control-group" aria-label="关键词搜索">
+          <label class="panel-label" for="searchInput">关键词</label>
+          <input id="searchInput" type="search" placeholder="搜索：H2、Gap、交易区间、避坑..." autocomplete="off" />
+          <a id="resetFilters" class="reset-button reset-link" href="./" onclick="location.href='./?reset=' + Date.now(); return false;">重置筛选</a>
+        </section>
+
+        <section class="control-group compact">
+          <p class="panel-label">阅读提示</p>
+          <p>
+            所有图均为原创合成K线教学示意。条件胜率不是固定胜率，形态必须结合市场周期、趋势强度、
+            K线背景、触发、止损、目标和风险收益比。
+          </p>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <section class="hero-strip" aria-label="总览">
+          <div>
+            <p class="eyebrow">Visual Study Desk</p>
+            <h2>从高优先级顺势形态，到开盘陷阱与 No Trade 场景。</h2>
+          </div>
+          <div class="metrics" aria-label="资料统计">
+            <div><strong id="metricPages">198</strong><span>页面</span></div>
+            <div><strong id="metricPatterns">185</strong><span>形态</span></div>
+            <div><strong>2</strong><span>专题</span></div>
+          </div>
+        </section>
+
+        <section class="reader" aria-live="polite">
+          <div class="reader-head">
+            <div>
+              <p id="readerMeta" class="reader-meta">选择左下方任意页面开始阅读</p>
+              <h3 id="readerTitle">Al Brooks 价格行为形态图谱</h3>
+            </div>
+            <div class="reader-actions">
+              <button id="prevBtn" type="button">上一页</button>
+              <button id="nextBtn" type="button">下一页</button>
+              <a id="openImageBtn" class="button-link" href="#" target="_blank" rel="noreferrer">打开高清K线</a>
+              <a id="openPageBtn" class="button-link secondary" href="#" target="_blank" rel="noreferrer">整页PDF版</a>
+            </div>
+          </div>
+          <div class="image-stage">
+            <img id="readerImage" alt="当前学习页面大图" />
+          </div>
+          <div id="readerNotes" class="reader-notes"></div>
+        </section>
+
+        <section class="library-head" aria-label="列表状态">
+          <div>
+            <p class="panel-label">页面库</p>
+            <h2 id="resultTitle">全部页面</h2>
+          </div>
+          <p id="resultCount">正在载入...</p>
+        </section>
+
+        <section id="cardGrid" class="card-grid" aria-label="页面缩略图列表"></section>
+      </section>
+    </main>
+
+    <script src="./app-data.js?v=clear4"></script>
+    <script src="./app.js?v=clear4"></script>
+  </body>
+</html>
