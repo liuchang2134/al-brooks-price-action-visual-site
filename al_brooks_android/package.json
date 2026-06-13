@@ -6,7 +6,8 @@
   "scripts": {
     "sync": "cap sync android",
     "open:android": "cap open android",
-    "build:android": "cd android && gradlew.bat assembleDebug"
+    "build:android": "cd android && gradlew.bat assembleDebug",
+    "build:android:local": "powershell -ExecutionPolicy Bypass -File .\\build-debug-apk.ps1"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
