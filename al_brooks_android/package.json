@@ -1,0 +1,18 @@
+{
+  "name": "al-brooks-android",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Android wrapper for the Al Brooks price action visual learning site.",
+  "scripts": {
+    "sync": "cap sync android",
+    "open:android": "cap open android",
+    "build:android": "cd android && gradlew.bat assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  }
+}

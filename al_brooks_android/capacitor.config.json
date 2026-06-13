@@ -1,0 +1,12 @@
+{
+  "appId": "com.liuchang.albrooks",
+  "appName": "Al Brooks 学习站",
+  "webDir": "../al_brooks_visual_site",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#f5f7fb",
+    "zoomEnabled": true
+  }
+}

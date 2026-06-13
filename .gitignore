@@ -1,3 +1,8 @@
 __pycache__/
 *.pyc
 al_brooks_visual_site/server.pid
+node_modules/
+al_brooks_android/node_modules/
+al_brooks_android/android/.gradle/
+al_brooks_android/android/**/build/
+al_brooks_android/android/local.properties
