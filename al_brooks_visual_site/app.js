@@ -133,33 +133,30 @@
   }, {});
 
   const learningPath = [
-    { section: "start-here", label: "先读规则", note: "图例、触发价、止损、风险声明" },
-    { section: "atlas-a-plus", label: "先学顺势", note: "强趋势、强突破、第一次回踩" },
-    { section: "atlas-a", label: "再学反转", note: "趋势线突破、测试失败、第二信号" },
-    { section: "morning-trend", label: "进入早盘", note: "趋势从开盘、Gap-and-Go、开盘回踩" },
-    { section: "morning-no-trade", label: "最后避坑", note: "开盘乱入场、区间中部、无跟随" },
+    { section: "start-here", label: "基础术语", note: "信号棒、触发价、结构止损" },
+    { section: "atlas-front", label: "市场周期", note: "趋势、区间、突破模式" },
+    { section: "atlas-a-plus", label: "趋势与突破", note: "强趋势、强突破、第一次回踩" },
+    { section: "atlas-a", label: "回调与反转", note: "H2/L2、MTR、第二信号" },
+    { section: "atlas-b", label: "交易区间", note: "边缘、假突破、突破模式" },
+    { section: "morning-trend", label: "开盘流程", note: "前5分钟、18-20根、确认突破" },
+    { section: "atlas-d", label: "避坑复盘", note: "No Trade、弱信号、目标不足" },
   ];
 
   const curriculumGroups = [
     {
-      title: "开始前先看",
-      subtitle: "规则、图例、风险",
-      items: ["start-here", "atlas-front", "opening-front"],
-    },
-    {
-      title: "形态图谱主线",
-      subtitle: "从顺势到避坑",
-      items: ["atlas-a-plus", "atlas-a", "atlas-b", "atlas-c", "atlas-d"],
+      title: "主学习路径",
+      subtitle: "按阶段推进",
+      items: ["start-here", "atlas-front", "atlas-a-plus", "atlas-a", "atlas-b", "atlas-c", "atlas-d"],
     },
     {
       title: "开盘专题",
-      subtitle: "前 60-90 分钟",
-      items: ["opening-a-plus", "opening-a", "opening-b", "opening-c", "opening-d"],
+      subtitle: "早盘按流程学",
+      items: ["opening-front", "morning-trend", "morning-reversal", "morning-range", "morning-breakout", "morning-filter", "morning-no-trade"],
     },
     {
-      title: "早盘策略",
-      subtitle: "按实战流程复盘",
-      items: ["morning-trend", "morning-reversal", "morning-range", "morning-breakout", "morning-filter", "morning-no-trade"],
+      title: "完整资料",
+      subtitle: "需要查漏时使用",
+      items: ["atlas-all", "opening-all", "morning-all"],
     },
   ];
 
@@ -273,7 +270,7 @@
             </button>`;
           })
           .join("");
-        return `<details class="curriculum-group" ${groupIndex < 2 ? "open" : ""}>
+        return `<details class="curriculum-group" ${groupIndex === 0 ? "open" : ""}>
           <summary>
             <span>
               <strong>${escapeHtml(group.title)}</strong>

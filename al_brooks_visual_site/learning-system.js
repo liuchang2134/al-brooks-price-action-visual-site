@@ -45,48 +45,24 @@
   const primaryTasks = [
     {
       id: "starter",
-      label: "从零开始学",
-      eyebrow: "先建立语言",
-      description: "术语、图例、触发规则和九阶段学习路径。",
-      outcome: "适合第一次打开网站，先知道每张图怎么看。",
-      cta: "开始基础学习",
-    },
-    {
-      id: "theory",
-      label: "搭建理论框架",
-      eyebrow: "先有地图",
-      description: "市场周期、Always In、突破、回调、反转、区间和管理。",
-      outcome: "适合把 198 页资料串成一套判断系统。",
-      cta: "打开理论地图",
+      label: "学习路径",
+      eyebrow: "先学什么",
+      description: "基础术语、市场周期、趋势、突破、回调、反转、区间、开盘、避坑。",
+      outcome: "适合按阶段推进，不在 198 页里迷路。",
+      cta: "查看路径",
     },
     {
       id: "bar",
-      label: "练一组逐K判断",
-      eyebrow: "看一根，判断一次",
+      label: "逐K训练",
+      eyebrow: "练判断",
       description: "隐藏未来K线，回答趋势、区间、触发还是等待。",
       outcome: "适合训练 Brooks 式 bar-by-bar 阅读。",
       cta: "开始逐K训练",
     },
     {
-      id: "noTrade",
-      label: "训练不交易",
-      eyebrow: "先学会过滤",
-      description: "区间中部、弱信号、无跟随、目标空间不足。",
-      outcome: "适合减少追涨杀跌和低质量入场。",
-      cta: "进入 No Trade",
-    },
-    {
-      id: "openingTree",
-      label: "练开盘流程",
-      eyebrow: "前 60-90 分钟",
-      description: "前5分钟、前15分钟、18-20根K线和突破确认。",
-      outcome: "适合早盘快速决策，不凭第一根K线冲动。",
-      cta: "打开开盘流程",
-    },
-    {
       id: "review",
-      label: "复盘当前形态",
-      eyebrow: "保存成复盘记录",
+      label: "复盘本",
+      eyebrow: "沉淀记录",
       description: "自动带入当前页背景、触发、止损、目标和放弃条件。",
       outcome: "适合把资料页变成自己的复盘本。",
       cta: "生成复盘草稿",
@@ -95,9 +71,24 @@
 
   const supportTools = [
     {
+      id: "theory",
+      label: "理论地图",
+      description: "市场周期、Always In、触发、MTR、区间和风险。",
+    },
+    {
       id: "glossary",
-      label: "术语速查",
+      label: "术语词典",
       description: "Signal Bar、H2、MTR、Measured Move 等中英对照。",
+    },
+    {
+      id: "noTrade",
+      label: "No Trade",
+      description: "区间中部、弱信号、无跟随和目标空间不足。",
+    },
+    {
+      id: "openingTree",
+      label: "开盘决策树",
+      description: "前5分钟、前15分钟、18-20根K线和突破确认。",
     },
     {
       id: "chartClinic",
@@ -731,41 +722,48 @@
     const current = runtime.currentPage;
     const learned = [...runtime.progress.values()].filter((item) => item.status === "mastered").length;
     const review = [...runtime.progress.values()].filter((item) => item.status === "review").length;
-    els.tabs.innerHTML = `<div class="task-board">
-      <div class="task-board-head">
+    const recommended = getRecommendedNextStep(current);
+    const progressTotal = Math.max(1, pages.filter((item) => item.kind === "pattern").length);
+    const progressPct = Math.min(100, Math.round(((learned + review * 0.5) / progressTotal) * 100));
+    const currentTitle = current ? shortTitle(current.title) : "从基础术语开始";
+    els.tabs.innerHTML = `<div class="learning-dashboard">
+      <section class="continue-card">
         <div>
-          <p class="panel-label">今天你要做什么？</p>
-          <h3>选一个任务开始，网站会把资料页、训练和复盘串起来。</h3>
+          <p class="panel-label">继续学习</p>
+          <h3>${escapeHtml(currentTitle)}</h3>
+          <p>${current ? `当前：${escapeHtml(current.grade)} / ${escapeHtml(current.cycle || "先判断市场周期")}` : "先按左侧课程路径完成基础术语和图例。"}</p>
         </div>
-        <div class="task-progress-card">
+        <div class="continue-side">
           <span class="sync-pill ${runtime.mode}">${escapeHtml(runtime.syncMessage)}</span>
           <strong>${learned} 已学 / ${review} 复盘中</strong>
-          <small>${current ? escapeHtml(shortTitle(current.title)) : "先选一页形态图"}</small>
+          <div class="progress-meter" aria-label="学习进度"><span style="width:${progressPct}%"></span></div>
+          <div class="continue-actions">
+            <button type="button" data-module="${escapeHtml(recommended.module)}">${escapeHtml(recommended.label)}</button>
+            <button type="button" data-module="starter">路径</button>
+          </div>
         </div>
-      </div>
-      <div class="task-card-grid">
+      </section>
+      <section class="core-task-list" aria-label="核心学习动作">
         ${primaryTasks
           .map(
             (task) => `<button type="button" class="task-card ${task.id === runtime.activeTab ? "active" : ""}" data-module="${task.id}">
               <span>${escapeHtml(task.eyebrow)}</span>
               <strong>${escapeHtml(task.label)}</strong>
               <small>${escapeHtml(task.description)}</small>
-              <em>${escapeHtml(task.cta)}</em>
             </button>`
           )
           .join("")}
-      </div>
-      <div class="support-tools">
-        <span>辅助工具</span>
+      </section>
+      <section class="tool-strip" aria-label="学习工具">
+        <span>学习工具</span>
         ${supportTools
           .map(
-            (tool) => `<button type="button" class="${tool.id === runtime.activeTab ? "active" : ""}" data-module="${tool.id}">
-              <strong>${escapeHtml(tool.label)}</strong>
-              <small>${escapeHtml(tool.description)}</small>
+            (tool) => `<button type="button" class="${tool.id === runtime.activeTab ? "active" : ""}" data-module="${tool.id}" title="${escapeHtml(tool.description)}">
+              ${escapeHtml(tool.label)}
             </button>`
           )
           .join("")}
-      </div>
+      </section>
     </div>`;
   }
 
@@ -788,16 +786,16 @@
   function renderCurrentPageActions() {
     const page = runtime.currentPage;
     if (!page) {
-      return `<section class="current-page-workbench empty-current">
+      return `<section class="current-page-workbench empty-current compact-current">
         <div>
           <p class="panel-label">当前页可以做什么？</p>
-          <h3>先从左侧目录选择一张形态图。</h3>
-          <p>选中页面后，这里会出现收藏、错题本、复盘草稿和相似训练入口。</p>
+          <h3>先从左侧课程路径选择一页。</h3>
+          <p>建议从“基础术语”开始，再进入趋势与突破。</p>
         </div>
       </section>`;
     }
     if (page.kind !== "pattern") {
-      return `<section class="current-page-workbench intro-current">
+      return `<section class="current-page-workbench intro-current compact-current">
         <div class="current-page-copy">
           <p class="panel-label">当前是说明页</p>
           <h3>${escapeHtml(shortTitle(page.title))}</h3>
@@ -808,15 +806,9 @@
           <button type="button" data-action="open-module" data-module="glossary">查术语</button>
           <button type="button" data-action="go-page" data-page="atlas-001">进入第一个形态</button>
         </div>
-        <ol class="current-page-steps">
-          <li>先确认图例和触发规则。</li>
-          <li>再理解条件胜率不是固定胜率。</li>
-          <li>最后进入 A+ 顺势形态。</li>
-        </ol>
       </section>`;
     }
     const progress = runtime.progress.get(page.id);
-    const bookmarked = runtime.bookmarks.has(page.id);
     const statusText = {
       not_started: "未开始",
       learning: "学习中",
@@ -825,73 +817,48 @@
       skipped: "No Trade",
     }[progress?.status || "not_started"];
     const recommended = getRecommendedNextStep(page);
-    return `<section class="current-page-workbench">
+    return `<section class="current-page-workbench compact-current">
       <div class="current-page-copy">
-        <p class="panel-label">当前页可以做什么？</p>
+        <p class="panel-label">当前页下一步</p>
         <h3>${escapeHtml(shortTitle(page.title))}</h3>
         <p>${escapeHtml(page.grade)} / ${escapeHtml(page.cycle || "市场周期待判断")} / ${escapeHtml(statusText)}</p>
       </div>
       <div class="current-page-actions">
-        <button type="button" class="${bookmarked ? "active" : ""}" data-action="quick-bookmark">${bookmarked ? "已收藏" : "收藏本页"}</button>
         <button type="button" data-action="quick-mastered">标记已学</button>
         <button type="button" data-action="quick-mistake">加入错题本</button>
         <button type="button" data-action="quick-draft">生成复盘</button>
         <button type="button" data-action="quick-next">${escapeHtml(recommended.label)}</button>
       </div>
-      <ol class="current-page-steps">
-        <li>先判断市场周期。</li>
-        <li>再找信号棒和触发价。</li>
-        <li>最后检查结构止损和第一目标区。</li>
-      </ol>
+      <p class="current-page-rule">固定顺序：市场周期 → 位置 → 信号棒 → 触发价 → 结构止损 → 第一目标区。</p>
     </section>`;
   }
 
   function renderStarter() {
-    const coreTerms = glossary.slice(0, 4);
     return `<div class="module-stack">
-      <section class="study-card guided-intro starter-intro">
-        <div>
-          <p class="panel-label">从零开始学</p>
-          <h3>先把“看图语言”统一，再进入 198 页资料。</h3>
-          <ol>
-            <li>先看术语和图例，知道信号棒、触发价、结构止损。</li>
-            <li>再按阶段进入趋势、突破、回调、反转、区间和开盘。</li>
-            <li>每看一页，都用下方检查清单判断是否值得交易。</li>
-          </ol>
+      <section class="study-card route-brief">
+        <div class="module-toolbar compact-toolbar">
+          <div>
+            <p class="panel-label">推荐学习路线</p>
+            <h3>左侧课程路径是主目录，这里只保留快速入口。</h3>
+            <p>按阶段推进：先理解语言，再读图，再用逐K和复盘训练判断。</p>
+          </div>
+          <div class="toolbar-actions">
+            <button type="button" data-action="open-module" data-module="theory">理论地图</button>
+            <button type="button" data-action="open-module" data-module="glossary">术语词典</button>
+          </div>
         </div>
-        <div class="guided-actions">
-          <button type="button" data-action="open-module" data-module="theory">打开理论地图</button>
-          <button type="button" data-action="open-module" data-module="glossary">先看术语速查</button>
-          <button type="button" data-action="go-section" data-section="start-here">打开规则说明页</button>
-        </div>
+        <ol class="route-pill-list">
+          ${pathStages
+            .map(
+              (stage, index) => `<li>
+                <strong>${index + 1}</strong>
+                <span>${escapeHtml(stage.title)}</span>
+                <button type="button" data-action="go-section" data-section="${stage.section}">进入</button>
+              </li>`
+            )
+            .join("")}
+        </ol>
       </section>
-      <div class="starter-term-row">
-        ${coreTerms
-          .map(
-            (item) => `<article class="study-card starter-term">
-              <div class="mini-chart">${renderMiniSvg(item.diagram, { label: item.term })}</div>
-              <strong>${escapeHtml(item.term)}</strong>
-              <span>${escapeHtml(item.cn)}</span>
-            </article>`
-          )
-          .join("")}
-      </div>
-      <div class="module-grid path-map">
-      ${pathStages
-        .map(
-          (stage, index) => `<article class="study-card path-stage">
-            <div class="stage-number">${index + 1}</div>
-            <div>
-              <h3>${escapeHtml(stage.title)}</h3>
-              <p><strong>先学什么：</strong>${escapeHtml(stage.first)}</p>
-              <p><strong>再看什么：</strong>${escapeHtml(stage.next)}</p>
-              <p><strong>练什么：</strong>${escapeHtml(stage.drill)}</p>
-              <button type="button" data-action="go-section" data-section="${stage.section}">进入这一阶段</button>
-            </div>
-          </article>`
-        )
-        .join("")}
-      </div>
     </div>`;
   }
 

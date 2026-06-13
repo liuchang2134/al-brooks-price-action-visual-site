@@ -11,7 +11,7 @@
       name="description"
       content="两份中文价格行为教学资料的可视化网站，包含形态图谱、开盘专题、条件胜率等级筛选与大图阅读器。"
     />
-    <link rel="stylesheet" href="./styles.css?v=clear14" />
+    <link rel="stylesheet" href="./styles.css?v=clear15" />
   </head>
   <body>
     <header class="topbar">
@@ -32,18 +32,18 @@
       <aside class="sidebar" aria-label="学习目录与筛选">
         <section class="intro-panel">
           <p class="panel-label">学习目录</p>
-          <strong>按阅读顺序进入</strong>
-          <span>先看规则，再学高优先级形态，最后用早盘策略和避坑清单做复盘。</span>
+          <strong>按人的学习顺序走</strong>
+          <span>左侧只负责找路：先建立语言，再读图训练，最后复盘避坑。工具都收在右侧学习工作台里。</span>
         </section>
 
         <section class="control-group path-panel" aria-label="推荐学习路径">
-          <p class="panel-label">推荐路径</p>
+          <p class="panel-label">课程路径</p>
           <div id="learningPath" class="path-list"></div>
         </section>
 
         <section class="control-group curriculum-panel" aria-label="课程章节目录">
           <div class="panel-row">
-            <p class="panel-label">课程章节</p>
+            <p class="panel-label">资料库</p>
             <span id="activeCrumb" class="active-crumb">全部资料</span>
           </div>
           <nav id="curriculumNav" class="curriculum-nav" aria-label="课程章节"></nav>
@@ -57,7 +57,7 @@
 
         <section class="control-group advanced-panel" aria-label="高级筛选">
           <details>
-            <summary>高级筛选</summary>
+            <summary>筛选（可选）</summary>
             <div class="advanced-body">
               <p class="filter-caption">按资料块</p>
               <div class="segmented" id="courseFilters">
@@ -92,36 +92,14 @@
         <section class="hero-strip" aria-label="总览">
           <div>
             <p class="eyebrow">Visual Study Desk</p>
-            <h2>从高优先级顺势形态，到开盘陷阱与 No Trade 场景。</h2>
+            <h2>今天先看一张图，完成一次判断。</h2>
+            <p class="hero-copy">课程路径负责顺序，学习工具负责练习，大图阅读器负责看清楚每一根K线。</p>
           </div>
           <div class="metrics" aria-label="资料统计">
             <div><strong id="metricPages">198</strong><span>页面</span></div>
             <div><strong id="metricPatterns">185</strong><span>形态</span></div>
             <div><strong>3</strong><span>资料块</span></div>
           </div>
-        </section>
-
-        <section class="study-system" id="studySystem" aria-label="学习系统">
-          <div class="study-system-head">
-            <div>
-              <p class="panel-label">学习工作台</p>
-              <h2>别先选功能，先选今天要完成的训练任务。</h2>
-            </div>
-            <p>每个入口都给出使用方法、下一步动作和当前形态页联动。资料库、逐K训练、No Trade、开盘流程和复盘本会串在一起。</p>
-          </div>
-          <div id="studyTabs" class="study-tabs" aria-label="学习任务入口"></div>
-          <div id="studyPanel" class="study-panel"></div>
-        </section>
-
-        <section class="strategy-board" aria-label="早盘策略独立目录">
-          <div class="strategy-board-head">
-            <div>
-              <p class="panel-label">早盘策略</p>
-              <h2>开盘前 60-90 分钟独立学习块</h2>
-            </div>
-            <p>把开盘专题拆成趋势从开盘、Gap-and-Go、开盘反转、18-20 根K线区间、失败突破和 No Trade 过滤。</p>
-          </div>
-          <div id="strategyBoard" class="strategy-grid"></div>
         </section>
 
         <section class="reader" aria-live="polite">
@@ -147,6 +125,29 @@
           <div id="pretradeChecklist" class="pretrade-checklist"></div>
         </section>
 
+        <section class="study-system" id="studySystem" aria-label="学习系统">
+          <div class="study-system-head">
+            <div>
+              <p class="panel-label">学习工作台</p>
+              <h2>继续学习、练习、复盘，都从这里进入。</h2>
+            </div>
+            <p>默认跟随左侧课程路径；需要训练时再打开逐K、No Trade、开盘流程或复盘本。</p>
+          </div>
+          <div id="studyTabs" class="study-tabs" aria-label="学习任务入口"></div>
+          <div id="studyPanel" class="study-panel"></div>
+        </section>
+
+        <details class="strategy-board strategy-accordion" aria-label="早盘策略独立目录">
+          <summary class="strategy-board-head">
+            <div>
+              <p class="panel-label">早盘策略</p>
+              <h2>开盘前 60-90 分钟策略块</h2>
+            </div>
+            <p>已收进“开盘流程”阶段。需要单独复盘早盘时展开。</p>
+          </summary>
+          <div id="strategyBoard" class="strategy-grid"></div>
+        </details>
+
         <section class="library-head" aria-label="列表状态">
           <div>
             <p class="panel-label">页面库</p>
@@ -159,9 +160,9 @@
       </section>
     </main>
 
-    <script src="./app-data.js?v=clear14"></script>
-    <script src="./app.js?v=clear14"></script>
+    <script src="./app-data.js?v=clear15"></script>
+    <script src="./app.js?v=clear15"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="./learning-system.js?v=clear14"></script>
+    <script src="./learning-system.js?v=clear15"></script>
   </body>
 </html>
